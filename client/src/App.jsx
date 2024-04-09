@@ -1,22 +1,29 @@
-import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [img, setImg] = useState(null);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    //console.log(URL.createObjectURL(e.target[0].value));
-    setImg(new Blob(Array.from(e.target[0].value), { type: "image/jpeg" }));
-    //const res = axios.post("Url")
+  const [imageSrc, setImageSrc] = useState("");
+  const [imageBlob, setImageBlob] = useState(null);
+
+  const handleSubmit = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImageSrc(reader.result);
+      };
+
+      const blob = new Blob([file], { type: "image/jpeg" });
+      setImageBlob(blob);
+    }
   };
-  console.log(img);
   return (
     <>
       <form onSubmit={handleSubmit}>
         <input type="file" />
         <button type="submit">send</button>
       </form>
-      {img ? <img src={"data:image/png;base64," + img} /> : null}
+      {imageBlob ? <img src={URL.createObjectURL(imageBlob)} /> : null}
     </>
   );
 }
