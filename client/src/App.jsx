@@ -1,29 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import imgl from "/Users/giammarcoferranti/Desktop/Pokemon-Final-Project/api/images/1712768167479.jpg";
 
 function App() {
-  const [imageSrc, setImageSrc] = useState("");
-  const [imageBlob, setImageBlob] = useState(null);
+  const [img, setImg] = useState();
+  const [loadImage, setLoadImage] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log(e.target[0].value);
 
-  const handleSubmit = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        setImageSrc(reader.result);
-      };
-
-      const blob = new Blob([file], { type: "image/jpeg" });
-      setImageBlob(blob);
-    }
+    const formData = new FormData();
+    formData.append("image", img);
+    // console.log(formData);
+    //const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const res = await axios.post("http://localhost:5010", formData);
+    setLoadImage(res.data);
   };
+
+  console.log(loadImage);
+
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input type="file" />
-        <button type="submit">send</button>
+      <form
+        action="/"
+        method="post"
+        encType="multipart/form-data"
+        onSubmit={handleSubmit}
+      >
+        <input
+          accept="image/*"
+          name="image"
+          type="file"
+          onChange={(e) => setImg(e.target.files[0])}
+        />
+        <input type="submit" />
       </form>
-      {imageBlob ? <img src={URL.createObjectURL(imageBlob)} /> : null}
+      <img src={imgl} />
     </>
   );
 }
