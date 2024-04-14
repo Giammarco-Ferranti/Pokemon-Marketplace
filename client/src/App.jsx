@@ -1,10 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import imgl from "/Users/giammarcoferranti/Desktop/Pokemon-Final-Project/api/images/1712768167479.jpg";
 
 function App() {
   const [img, setImg] = useState();
+  //console.log(img);
   const [loadImage, setLoadImage] = useState("");
+  const [AllImg, setAllImg] = useState([]);
+  console.log(AllImg);
+
+  useEffect(() => {
+    const getDataBack = async () => {
+      const res = await axios.get(`http://localhost:5010/image/${loadImage}`);
+      setImg(res.data[0].img.replace("images/", ""));
+      //setImg(res.data);
+    };
+    getDataBack();
+  }, [loadImage]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log(e.target[0].value);
@@ -14,10 +26,18 @@ function App() {
     // console.log(formData);
     //const config = { headers: { "Content-Type": "multipart/form-data" } };
     const res = await axios.post("http://localhost:5010", formData);
-    setLoadImage(res.data);
+    setLoadImage(res.data[0].img.replace("images/", ""));
   };
 
-  console.log(loadImage);
+  useEffect(() => {
+    const getAllImages = async () => {
+      const res = await axios.get("http://localhost:5010/all");
+      setAllImg(res.data);
+    };
+    getAllImages();
+  }, []);
+
+  //console.log(img);
 
   return (
     <>
@@ -35,7 +55,15 @@ function App() {
         />
         <input type="submit" />
       </form>
-      <img src={imgl} />
+
+      {img ? (
+        <img src={`http://localhost:5010/${img}`} />
+      ) : (
+        AllImg.map((element) => {
+          if (element.name == undefined || element.name == null) return null;
+          return <img src={`http://localhost:5010/${element.name}`} />;
+        })
+      )}
     </>
   );
 }
