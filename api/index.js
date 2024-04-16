@@ -120,6 +120,7 @@ const login = async (req, res) => {
       if (isSame) {
         const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY);
         //send user data
+
         return res.status(201).send(token);
       } else {
         return res.status(401).send("Authentication failed");

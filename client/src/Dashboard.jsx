@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import AuthProvider from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 
 function Dashboard() {
-  // const token = useContext(AuthProvider);
+  const { token } = useContext(AuthContext);
+
+  if (!token) return <Navigate to="/" />;
 
   // if (!token) {
   //   return <Navigate to="/" replace />;

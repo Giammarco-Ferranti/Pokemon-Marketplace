@@ -16,9 +16,10 @@ const Login = () => {
         email,
         password,
       });
-      setToken(res.data.token);
-      localStorage.setItem("token", res.data.token);
+      console.log(res.data);
+      localStorage.setItem("token", res.data);
       navigate("/dashboard");
+      dispatch({ type: "LOGIN", payload: res.data });
     } catch (error) {
       console.log(error);
       setToken(null);
@@ -30,7 +31,7 @@ const Login = () => {
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Username"
+          placeholder="Email"
         />
         <input
           type="password"
