@@ -74,19 +74,19 @@ const saveUser = async (req, res, next) => {
 
 const signUp = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
+    const { username, email, password } = req.body;
     const data = {
-      userName,
+      username,
       email,
       password: await bcrypt.hash(password, 10),
     };
 
     const userFind = await pool.query(
-      `SELECT * FROM public.user WHERE username = $1`,
-      [data.userName]
+      `SELECT * FROM public.user WHERE username ILIKE $1`,
+      [data.username]
     );
 
-    if (userFind) {
+    if (userFind.rows.length > 0) {
       return res.status(400).send("Username, already taken");
     } else {
       const user = await pool.query(
@@ -96,10 +96,13 @@ const signUp = async (req, res) => {
           )
           RETURNING *
         `,
-        [uuidv4(), data.userName, data.email, data.password]
+        [uuidv4(), data.username, data.email, data.password]
       );
+      const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
+        expiresIn: "1h",
+      });
 
-      res.send("user registred successfully");
+      res.send(token);
     }
   } catch (error) {
     console.log(error);
@@ -118,7 +121,9 @@ const login = async (req, res) => {
     if (user) {
       const isSame = await bcrypt.compare(password, user.rows[0].password);
       if (isSame) {
-        const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY);
+        const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
+          expiresIn: 30,
+        });
         //send user data
 
         return res.status(201).send(token);

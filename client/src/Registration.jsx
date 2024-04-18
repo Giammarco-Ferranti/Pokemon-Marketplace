@@ -1,22 +1,30 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setToken } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = axios.post("http://localhost/5010/signup", {
+      const res = await axios.post("http://localhost:5010/signup", {
         username,
         email,
         password,
       });
       console.log(res.data);
+      localStorage.setItem("token", res.data);
+      navigate("/dashboard");
+      setToken(res.data);
     } catch (error) {
       console.log(error);
+      setToken(null);
     }
   };
   return (
@@ -31,7 +39,7 @@ const Registration = () => {
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Username"
+          placeholder="Email"
           required
         />
         <input

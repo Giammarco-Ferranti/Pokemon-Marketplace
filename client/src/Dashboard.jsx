@@ -1,11 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   // if (!token) {
   //   return <Navigate to="/" replace />;
   // }
+
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
 
   const [img, setImg] = useState();
   //console.log(img);
@@ -34,6 +39,12 @@ function Dashboard() {
     setLoadImage(res.data[0].img.replace("images/", ""));
   };
 
+  const handleLogout = () => {
+    setToken(null);
+    navigate("/login");
+    localStorage.removeItem("token");
+  };
+
   useEffect(() => {
     const getAllImages = async () => {
       const res = await axios.get("http://localhost:5010/all");
@@ -60,6 +71,10 @@ function Dashboard() {
         />
         <input type="submit" />
       </form>
+
+      <button onClick={handleLogout} className="bg-slate-400 p-4">
+        Logout
+      </button>
 
       {img ? (
         <img src={`http://localhost:5010/${img}`} />

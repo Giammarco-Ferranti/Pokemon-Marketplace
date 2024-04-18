@@ -3,6 +3,7 @@ import { useAuth } from "./AuthContext.jsx";
 import ProtectedRoute from "./ProtectedRoute";
 import Dashboard from "./Dashboard.jsx";
 import Login from "./Login";
+import Registration from "./Registration.jsx";
 
 const Routes = () => {
   const { token } = useAuth();
@@ -12,6 +13,10 @@ const Routes = () => {
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/registration",
+      element: <Registration />,
     },
   ];
 
