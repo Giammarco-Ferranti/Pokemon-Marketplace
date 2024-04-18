@@ -1,41 +1,62 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Registration from "./Registration";
-// import { AuthContext } from "./AuthContext";
-import Dashboard from "./Dashboard.jsx";
-import Login from "./Login.jsx";
-import { useAuth } from "./AuthContext";
-import ProtectedRoute from "./ProtectedRoute";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { useAuth } from "./AuthContext.jsx";
+import ProtectedRoute from "./ProtectedRoute";
+import Dashboard from "./Dashboard.jsx";
+import Login from "./Login";
 
 const Routes = () => {
   const { token } = useAuth();
 
-  const publicRoutes = [
+  // Define public routes accessible to all users
+  const routesForPublic = [
     {
       path: "/login",
       element: <Login />,
     },
   ];
 
-  const restrictedRoutes = [
+  // Define routes accessible only to authenticated users
+  const routesForAuthenticatedOnly = [
     {
       path: "/",
-      element: <ProtectedRoute />,
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
           path: "/dashboard",
           element: <Dashboard />,
         },
+        {
+          path: "/profile",
+          element: <div>User Profile</div>,
+        },
+        {
+          path: "/logout",
+          element: <div>Logout</div>,
+        },
       ],
     },
   ];
 
+  // Define routes accessible only to non-authenticated users
+  const routesForNotAuthenticatedOnly = [
+    {
+      path: "/",
+      element: <div>Home Page</div>,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+  ];
+
+  // Combine and conditionally include routes based on authentication status
   const router = createBrowserRouter([
-    ...publicRoutes,
-    ...(!token ? publicRoutes : []),
-    ...restrictedRoutes,
+    ...routesForPublic,
+    ...(!token ? routesForNotAuthenticatedOnly : []),
+    ...routesForAuthenticatedOnly,
   ]);
+
+  // Provide the router configuration using RouterProvider
   return <RouterProvider router={router} />;
 };
 

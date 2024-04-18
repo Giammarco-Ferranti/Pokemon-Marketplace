@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setToken } = useContext(AuthContext);
+  const { setToken } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -19,7 +19,7 @@ const Login = () => {
       console.log(res.data);
       localStorage.setItem("token", res.data);
       navigate("/dashboard");
-      dispatch({ type: "LOGIN", payload: res.data });
+      setToken(res.data);
     } catch (error) {
       console.log(error);
       setToken(null);
