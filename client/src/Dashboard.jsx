@@ -73,7 +73,7 @@ function Dashboard() {
       </form>
 
       <button onClick={handleLogout} className="bg-slate-400 p-4">
-        Logout
+        Logouts
       </button>
 
       {img ? (
