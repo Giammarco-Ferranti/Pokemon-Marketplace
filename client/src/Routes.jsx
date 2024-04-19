@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Route, RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
 import ProtectedRoute from "./ProtectedRoute";
 import Dashboard from "./Dashboard.jsx";
@@ -10,6 +10,10 @@ const Routes = () => {
 
   // Define public routes accessible to all users
   const routesForPublic = [
+    {
+      path: "/",
+      element: <Login />,
+    },
     {
       path: "/login",
       element: <Login />,
@@ -51,6 +55,10 @@ const Routes = () => {
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/registration",
+      element: <Registration />,
     },
   ];
 
