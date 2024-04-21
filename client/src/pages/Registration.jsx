@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../utils/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Registration = () => {

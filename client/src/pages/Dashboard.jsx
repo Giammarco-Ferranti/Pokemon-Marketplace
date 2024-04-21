@@ -1,49 +1,50 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../utils/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Hero from "../components/ui/Layouts/Hero";
 
 function Dashboard() {
   // if (!token) {
   //   return <Navigate to="/" replace />;
   // }
 
-  const { setToken } = useAuth();
-  const navigate = useNavigate();
+  // const { setToken } = useAuth();
+  // const navigate = useNavigate();
 
-  const [img, setImg] = useState();
-  //console.log(img);
-  const [loadImage, setLoadImage] = useState("");
+  // const [img, setImg] = useState();
+  // //console.log(img);
+  // const [loadImage, setLoadImage] = useState("");
   const [AllImg, setAllImg] = useState([]);
   console.log(AllImg);
 
-  useEffect(() => {
-    const getDataBack = async () => {
-      const res = await axios.get(`http://localhost:5010/image/${loadImage}`);
-      setImg(res.data[0].img.replace("images/", ""));
-      //setImg(res.data);
-    };
-    getDataBack();
-  }, [loadImage]);
+  // useEffect(() => {
+  //   const getDataBack = async () => {
+  //     const res = await axios.get(`http://localhost:5010/image/${loadImage}`);
+  //     setImg(res.data[0].img.replace("images/", ""));
+  //     //setImg(res.data);
+  //   };
+  //   getDataBack();
+  // }, [loadImage]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // console.log(e.target[0].value);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   // console.log(e.target[0].value);
 
-    const formData = new FormData();
-    formData.append("image", img);
-    // console.log(formData);
-    //const config = { headers: { "Content-Type": "multipart/form-data" } };
-    const res = await axios.post("http://localhost:5010", formData);
-    setLoadImage(res.data[0].img.replace("images/", ""));
-  };
+  //   const formData = new FormData();
+  //   formData.append("image", img);
+  //   // console.log(formData);
+  //   //const config = { headers: { "Content-Type": "multipart/form-data" } };
+  //   const res = await axios.post("http://localhost:5010", formData);
+  //   setLoadImage(res.data[0].img.replace("images/", ""));
+  // };
 
-  const handleLogout = () => {
-    setToken(null);
-    navigate("/login");
-    localStorage.removeItem("token");
-  };
+  // const handleLogout = () => {
+  //   setToken(null);
+  //   navigate("/login");
+  //   localStorage.removeItem("token");
+  // };
 
   useEffect(() => {
     const getAllImages = async () => {
@@ -57,7 +58,8 @@ function Dashboard() {
 
   return (
     <>
-      <form
+      <Hero img={AllImg} />
+      {/* <form
         action="/"
         method="post"
         encType="multipart/form-data"
@@ -83,7 +85,7 @@ function Dashboard() {
           if (element.name == undefined || element.name == null) return null;
           return <img src={`http://localhost:5010/${element.name}`} />;
         })
-      )}
+      )} */}
     </>
   );
 }

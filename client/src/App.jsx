@@ -1,5 +1,5 @@
 import React from "react";
-import AuthProvider from "./AuthContext";
+import AuthProvider from "./utils/Auth/AuthContext";
 import Routes from "./Routes";
 
 const App = () => {
