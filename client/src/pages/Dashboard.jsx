@@ -6,6 +6,60 @@ import { useNavigate } from "react-router-dom";
 import Hero from "../Layouts/Hero";
 import Grid from "@/Layouts/Grid";
 
+import DataTable from "@/Layouts/DataTable";
+import { createColumnHelper } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import Footer from "@/Layouts/Footer";
+
+const defaultData = [
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+  {
+    id: "489e1d42",
+    amount: 125,
+    status: "processing",
+    email: "example@gmail.com",
+  },
+];
+
+const columnHelper = createColumnHelper();
+
+const columns = [
+  columnHelper.accessor("name", {
+    id: "Image",
+    header: () => "Image",
+    cell: ({ row }) => {
+      console.log(row.original.name);
+      return (
+        <img
+          src={`http://localhost:5010/${row.original.name}`}
+          className="w-10"
+        />
+      );
+    },
+  }),
+  columnHelper.accessor("Rarity", {
+    id: "Rarity",
+    header: () => "Rarity",
+    cell: (info) => {
+      return (
+        <Badge className={"bg-purple-200 text-purple-800 rounded-lg"}>
+          Ultra Rare
+        </Badge>
+      );
+    },
+  }),
+  columnHelper.accessor("amount", {
+    id: "amount",
+    header: () => "Amount",
+    cell: (info) => info.getValue(),
+  }),
+];
+
 function Dashboard() {
   // if (!token) {
   //   return <Navigate to="/" replace />;
@@ -18,7 +72,6 @@ function Dashboard() {
   // //console.log(img);
   // const [loadImage, setLoadImage] = useState("");
   const [AllImg, setAllImg] = useState([]);
-  console.log(AllImg);
 
   // useEffect(() => {
   //   const getDataBack = async () => {
@@ -47,6 +100,13 @@ function Dashboard() {
   //   localStorage.removeItem("token");
   // };
 
+  // const columns = [
+  //   {
+  //     accessorKey: "status",
+  //     header: "status",
+  //   },
+  // ];
+
   useEffect(() => {
     const getAllImages = async () => {
       const res = await axios.get("http://localhost:5010/all");
@@ -61,6 +121,8 @@ function Dashboard() {
     <>
       <Hero />
       <Grid img={AllImg} />
+      <DataTable columns={columns} data={AllImg} />
+      <Footer />
       {/* <form
         action="/"
         method="post"

@@ -32,10 +32,6 @@ const Routes = () => {
           index: true,
           element: <Dashboard />,
         },
-        {
-          path: "/box1",
-          element: <Login />,
-        },
       ],
     },
     {
@@ -56,7 +52,13 @@ const Routes = () => {
       children: [
         {
           path: "/dashboard",
-          element: <Dashboard />,
+          element: <Root />,
+          children: [
+            {
+              index: true,
+              element: <Dashboard />,
+            },
+          ],
         },
       ],
     },

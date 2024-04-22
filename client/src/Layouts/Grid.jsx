@@ -26,7 +26,7 @@ const Grid = ({ img }) => {
                   />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start p-2 pt-0 text-sm font-semibold">
-                  <Badge variant={"outline"} className={"rounded-md w-full"}>
+                  <Badge variant={"secondary"} className={"rounded-md w-full"}>
                     <div>
                       <p className="text-base ">Pikatchu</p>
                       <p>150€ - 1 month</p>
