@@ -3,7 +3,8 @@ import axios from "axios";
 
 import { useAuth } from "../utils/Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Hero from "../components/ui/Layouts/Hero";
+import Hero from "../Layouts/Hero";
+import Grid from "@/Layouts/Grid";
 
 function Dashboard() {
   // if (!token) {
@@ -58,7 +59,8 @@ function Dashboard() {
 
   return (
     <>
-      <Hero img={AllImg} />
+      <Hero />
+      <Grid img={AllImg} />
       {/* <form
         action="/"
         method="post"
