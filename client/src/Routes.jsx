@@ -10,6 +10,10 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
 import Registration from "./pages/Registration.jsx";
 import NavbarLayout from "./Layouts/Navbar.jsx";
+import Product from "./pages/Product.jsx";
+import Profile from "./pages/Profile.jsx";
+import Orders from "./pages/Orders.jsx";
+import Listing from "./pages/Listing.jsx";
 
 const Routes = () => {
   const Root = () => {
@@ -31,6 +35,22 @@ const Routes = () => {
         {
           index: true,
           element: <Dashboard />,
+        },
+        {
+          path: "/product",
+          element: <Product />,
+        },
+        {
+          path: "/profile",
+          element: <Profile />,
+        },
+        {
+          path: "/orders",
+          element: <Orders />,
+        },
+        {
+          path: "/listings",
+          element: <Listing />,
         },
       ],
     },

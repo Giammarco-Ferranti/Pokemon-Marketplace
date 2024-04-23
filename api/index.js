@@ -82,7 +82,7 @@ const signUp = async (req, res) => {
     };
 
     const userFind = await pool.query(
-      `SELECT * FROM public.user WHERE username ILIKE $1`,
+      `SELECT * FROM public.users WHERE username ILIKE $1`,
       [data.username]
     );
 
@@ -90,7 +90,7 @@ const signUp = async (req, res) => {
       return res.status(400).send("Username, already taken");
     } else {
       const user = await pool.query(
-        `INSERT INTO public.user (id, username, email, password)
+        `INSERT INTO public.users (id, username, email, password)
         VALUES(
           $1, $2, $3, $4
           )
@@ -114,7 +114,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     //console.log(req.body);
     const user = await pool.query(
-      `SELECT * FROM public.user WHERE email ILIKE $1`,
+      `SELECT * FROM public.users WHERE email ILIKE $1`,
       [email]
     );
 
@@ -140,19 +140,20 @@ const login = async (req, res) => {
 
 //endpoints image
 app.post("/", upload.single("image"), async (req, res) => {
-  const { filename, path, mimetype, size } = req.file;
-
+  const { filename, path } = req.file;
+  //needs to be done: update request to get owner, price, description
   const insertIntoDb = await pool.query(
     `
   INSERT INTO public.products (
     id,
     name ,
-    img ,
-    mimetype,
-    size
+    imgPath ,
+    owner,
+    price,
+    description,
   )
   VALUES($1, $2, $3, $4, $5) RETURNING *`,
-    [uuidv4(), filename, path, mimetype, size]
+    [uuidv4(), filename, path]
   );
 
   res.send(insertIntoDb.rows);
