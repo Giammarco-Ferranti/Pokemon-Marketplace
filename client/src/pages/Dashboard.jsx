@@ -33,10 +33,9 @@ const columns = [
     id: "Image",
     header: () => "Image",
     cell: ({ row }) => {
-      console.log(row.original.name);
       return (
         <img
-          src={`http://localhost:5010/${row.original.name}`}
+          src={`http://localhost:5010/${row.original.img_path}`}
           className="w-10"
         />
       );
@@ -109,7 +108,7 @@ function Dashboard() {
 
   useEffect(() => {
     const getAllImages = async () => {
-      const res = await axios.get("http://localhost:5010/all");
+      const res = await axios.get("http://localhost:5010/product/");
       setAllImg(res.data);
     };
     getAllImages();

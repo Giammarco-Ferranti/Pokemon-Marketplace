@@ -21,13 +21,13 @@ const Login = () => {
   const { setToken } = useAuth();
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:5010/login", {
+      const res = await axios.post("http://localhost:5010/user/login", {
         email,
         password,
       });
       console.log(res.data);
-      localStorage.setItem("token", res.data);
-      navigate("/dashboard");
+      localStorage.setItem("user", JSON.stringify(res.data));
+      navigate(-1);
       setToken(res.data);
     } catch (error) {
       console.log(error);
