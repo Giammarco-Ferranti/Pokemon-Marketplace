@@ -71,12 +71,12 @@ const Routes = () => {
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
-          path: "/dashboard",
+          path: "/profile",
           element: <Root />,
           children: [
             {
               index: true,
-              element: <Dashboard />,
+              element: <Profile />,
             },
           ],
         },

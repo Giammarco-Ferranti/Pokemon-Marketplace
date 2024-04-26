@@ -28,7 +28,7 @@ const Login = () => {
       console.log(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
       navigate(-1);
-      setToken(res.data);
+      setToken(res.data.token);
     } catch (error) {
       console.log(error);
       setToken(null);

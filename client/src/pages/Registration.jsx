@@ -28,9 +28,9 @@ const Registration = () => {
         password,
       });
       console.log(res.data);
-      localStorage.setItem("token", res.data);
-      navigate("/dashboard");
-      setToken(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      navigate("/");
+      setToken(res.data.token);
     } catch (error) {
       console.log(error);
       setToken(null);

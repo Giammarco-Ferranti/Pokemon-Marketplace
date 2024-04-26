@@ -8,10 +8,9 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     //console.log(req.body);
-    const user = await pool.query(
-      `SELECT * FROM public.users WHERE email ILIKE $1`,
-      [email]
-    );
+    const user = await pool.query(`SELECT * FROM users WHERE email ILIKE $1`, [
+      email,
+    ]);
 
     if (user) {
       const isSame = await bcrypt.compare(password, user.rows[0].password);
@@ -33,6 +32,6 @@ export const login = async (req, res) => {
       return res.status(401).send("Authentication failed");
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).send(error);
   }
 };

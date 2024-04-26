@@ -8,7 +8,6 @@ const Profile = () => {
         <ul>
           <li>Orders</li>
           <li>Listings</li>
-          <li>Billing</li>
         </ul>
       </div>
     </div>

@@ -1,11 +1,19 @@
 import pool from "../../db/connection.js";
 
 export const getAllProducts = async (req, res) => {
-  const getFromDb = await pool.query(
+  try {
+    const getFromDb = await pool.query(
+      `
+        SELECT * FROM products LIMIT 100;
     `
-      SELECT * FROM public.products;
-  `
-  );
+    );
 
-  res.send(getFromDb.rows);
+    if (getFromDb.rows) {
+      return res.status(200).send(getFromDb.rows);
+    } else {
+      return res.status(400).send("No products");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };

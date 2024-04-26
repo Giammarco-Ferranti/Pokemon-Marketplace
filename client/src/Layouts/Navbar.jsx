@@ -20,7 +20,7 @@ const NavbarLayout = () => {
             onClick={() => {
               localStorage.removeItem("user");
               localStorage.removeItem("token");
-              navigate("/dashboard");
+              navigate("/");
             }}
           >
             Logout
