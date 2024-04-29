@@ -1,9 +1,4 @@
-import {
-  Outlet,
-  Route,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "./utils/Auth/AuthContext.jsx";
 import ProtectedRoute from "./utils/Auth/ProtectedRoute.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -40,18 +35,6 @@ const Routes = () => {
           path: "/product/:productId",
           element: <Product />,
         },
-        {
-          path: "/profile",
-          element: <Profile />,
-        },
-        {
-          path: "/orders",
-          element: <Orders />,
-        },
-        {
-          path: "/listings",
-          element: <Listing />,
-        },
       ],
     },
     {
@@ -77,6 +60,26 @@ const Routes = () => {
             {
               index: true,
               element: <Profile />,
+            },
+          ],
+        },
+        {
+          path: "/listings",
+          element: <Root />,
+          children: [
+            {
+              index: true,
+              element: <Listing />,
+            },
+          ],
+        },
+        {
+          path: "/orders",
+          element: <Root />,
+          children: [
+            {
+              index: true,
+              element: <Orders />,
             },
           ],
         },

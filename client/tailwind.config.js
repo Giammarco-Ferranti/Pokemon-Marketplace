@@ -1,6 +1,7 @@
 const { nextui } = require("@nextui-org/react");
 
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -11,6 +12,15 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      // Note: This is @notapatch and not the docs
+      //       I think what it is trying to say is that if you define
+      //       a custom font here you are also removing the default
+      //       font families sans, serif and mono.
+      //
+
+      basic: ["Montserrat", ...defaultTheme.fontFamily.sans],
+    },
     container: {
       center: true,
       padding: "2rem",
