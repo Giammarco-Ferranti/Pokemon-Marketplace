@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const DataTable = ({ data, columns }) => {
+const DataTable = ({ data, columns, title }) => {
   const table = useReactTable({
     data,
     columns,
@@ -22,13 +22,13 @@ const DataTable = ({ data, columns }) => {
   });
 
   return (
-    <div className="w-full mt-20 border rounded-md flex flex-col justify-center">
-      <h1 className="font-semibold text-3xl">Trending</h1>
+    <div className="w-full flex flex-col justify-center">
+      <h1 className="font-semibold text-3xl pb-3">{title}</h1>
       <div className="">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-none">
+              <TableRow key={headerGroup.id} className="border-b">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>

@@ -10,6 +10,7 @@ import DataTable from "@/Layouts/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import Footer from "@/Layouts/Footer";
+import { Button } from "@/components/ui/button";
 
 const defaultData = [
   {
@@ -29,6 +30,13 @@ const defaultData = [
 const columnHelper = createColumnHelper();
 
 const columns = [
+  columnHelper.accessor("index", {
+    id: "index",
+    header: () => "#",
+    cell: ({ row }) => {
+      return <h3>{row.index + 1}</h3>;
+    },
+  }),
   columnHelper.accessor("name", {
     id: "Image",
     header: () => "Image",
@@ -41,25 +49,22 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor("Rarity", {
-    id: "Rarity",
-    header: () => "Rarity",
-    cell: (info) => {
-      return (
-        <Badge className={"bg-purple-200 text-purple-800 rounded-lg"}>
-          Ultra Rare
-        </Badge>
-      );
+  columnHelper.accessor("Name", {
+    id: "Name",
+    header: () => "Name",
+    cell: ({ row }) => {
+      return <h3>{row.name}</h3>;
     },
   }),
-  columnHelper.accessor("amount", {
-    id: "amount",
-    header: () => "Amount",
+  columnHelper.accessor("volume", {
+    id: "volume",
+    header: () => "Volume",
     cell: (info) => info.getValue(),
   }),
 ];
 
 function Dashboard() {
+  const navigate = useNavigate();
   // if (!token) {
   //   return <Navigate to="/" replace />;
   // }
@@ -70,7 +75,7 @@ function Dashboard() {
   // const [img, setImg] = useState();
   // //console.log(img);
   // const [loadImage, setLoadImage] = useState("");
-  const [AllImg, setAllImg] = useState([]);
+  const [MostValuable, setMostValuable] = useState([]);
 
   // useEffect(() => {
   //   const getDataBack = async () => {
@@ -107,11 +112,11 @@ function Dashboard() {
   // ];
 
   useEffect(() => {
-    const getAllImages = async () => {
-      const res = await axios.get("http://localhost:5010/product/");
-      setAllImg(res.data);
+    const getMostValuableProducts = async () => {
+      const res = await axios.get("http://localhost:5010/product/priciest");
+      setMostValuable(res.data);
     };
-    getAllImages();
+    getMostValuableProducts();
   }, []);
 
   //console.log(img);
@@ -119,9 +124,34 @@ function Dashboard() {
   return (
     <>
       <Hero />
-      <Grid img={AllImg} />
-      <DataTable columns={columns} data={AllImg} />
-      <Footer />
+      <Grid img={MostValuable} title={"Best"} />
+      <Button
+        onClick={() => navigate("/explore")}
+        variant="outline"
+        className="rounded-3xl"
+        size="lg"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6 text-gray-500"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+          />
+        </svg>
+      </Button>
+      <DataTable
+        columns={columns}
+        data={MostValuable}
+        title={"Trending Categories"}
+      />
+
       {/* <form
         action="/"
         method="post"

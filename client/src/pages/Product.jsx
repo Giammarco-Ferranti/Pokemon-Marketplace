@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Product = () => {
   const { productId } = useParams();
+
   const navigate = useNavigate();
   console.log(productId);
   const [product, setProduct] = useState();

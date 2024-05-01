@@ -9,13 +9,17 @@ import Product from "./pages/Product.jsx";
 import Profile from "./pages/Profile.jsx";
 import Orders from "./pages/Orders.jsx";
 import Listing from "./pages/Listing.jsx";
+import Footer from "./Layouts/Footer.jsx";
+import Explore from "./pages/Explore.jsx";
+import Users from "./pages/Users.jsx";
 
 const Routes = () => {
   const Root = () => {
     return (
-      <div className="flex flex-col items-center justify-start w-screen max-w-screen-xl p-3">
+      <div className="flex flex-col items-center justify-start w-screen max-w-screen-xl ">
         <NavbarLayout />
         <Outlet />
+        <Footer />
       </div>
     );
   };
@@ -34,6 +38,14 @@ const Routes = () => {
         {
           path: "/product/:productId",
           element: <Product />,
+        },
+        {
+          path: "/explore",
+          element: <Explore />,
+        },
+        {
+          path: "/users",
+          element: <Users />,
         },
       ],
     },
@@ -54,7 +66,7 @@ const Routes = () => {
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
-          path: "/profile",
+          path: "/profile/",
           element: <Root />,
           children: [
             {
@@ -64,7 +76,7 @@ const Routes = () => {
           ],
         },
         {
-          path: "/listings",
+          path: "/profile/listings",
           element: <Root />,
           children: [
             {
@@ -74,7 +86,7 @@ const Routes = () => {
           ],
         },
         {
-          path: "/orders",
+          path: "/profile/orders",
           element: <Root />,
           children: [
             {

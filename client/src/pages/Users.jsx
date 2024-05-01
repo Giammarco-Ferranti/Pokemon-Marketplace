@@ -52,16 +52,14 @@ const columns = [
     cell: (info) => info.getValue(),
   }),
 ];
-const Orders = () => {
+
+const Users = () => {
   return (
-    <div
-      className="flex flex-col w-full p-4 h-screen justify-start
-     items-center mt-20"
-    >
-      <h1 className="text-3xl font-semibold">Your orders</h1>
+    <div className="flex flex-col h-screen w-full justify-start items-center mt-20 p-4">
+      <h1 className="text-3xl self-start">Top users</h1>
       <DataTable columns={columns} data={defaultData} />
     </div>
   );
 };
 
-export default Orders;
+export default Users;

@@ -3,11 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="w-full h-96 mt-20 flex flex-row gap-20 items-center justify-center">
-      <div className="">
-        <h1 className="text-xl font-semibold">Newsletter</h1>
-        <Input type="email" placeholder="Email" />
-      </div>
+    <div className="w-full h-96 mt-10 flex flex-row gap-32 items-center justify-center">
       <div>
         <h1 className="text-base font-semibold">Marketplace</h1>
         <ul>
