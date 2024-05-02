@@ -1,13 +1,17 @@
 import pool from "../../db/connection.js";
 
 export const deleteOrder = async (req, res) => {
-  const { orderId } = req.body;
+  const { id } = req.params;
   try {
     const checkStatus = await pool.query(
       `SELECT status FROM orders WHERE id = $1`,
-      [orderId]
+      [id]
     );
+    console.log(checkStatus.rows[0].status);
 
+    if (checkStatus.rows[0].status === "Delivered") {
+      return res.status(400).send("Order already delivered");
+    }
     if (checkStatus.rows[0].status === "shipped") {
       const deleteOrder = await pool.query(
         `
@@ -15,7 +19,7 @@ export const deleteOrder = async (req, res) => {
           WHERE id = $1
           RETURNING *;
       `,
-        [orderId]
+        [id]
       );
 
       if (deleteOrder) {
@@ -23,8 +27,6 @@ export const deleteOrder = async (req, res) => {
       } else {
         return res.status(400).send("Couldn't delete the order");
       }
-    } else if (checkStatus.rows[0].status === "delivered") {
-      return res.status(400).send("Order already delivered");
     }
   } catch (error) {
     return res.statu(500).send(error);

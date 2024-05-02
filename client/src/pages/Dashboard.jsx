@@ -65,61 +65,21 @@ const columns = [
 
 function Dashboard() {
   const navigate = useNavigate();
-  // if (!token) {
-  //   return <Navigate to="/" replace />;
-  // }
-
-  // const { setToken } = useAuth();
-  // const navigate = useNavigate();
-
-  // const [img, setImg] = useState();
-  // //console.log(img);
-  // const [loadImage, setLoadImage] = useState("");
   const [MostValuable, setMostValuable] = useState([]);
+  const [bestUsers, setBestUsers] = useState([]);
+  const getMostValuableProducts = async () => {
+    const res = await axios.get("http://localhost:5010/product/priciest");
+    setMostValuable(res.data);
+  };
 
-  // useEffect(() => {
-  //   const getDataBack = async () => {
-  //     const res = await axios.get(`http://localhost:5010/image/${loadImage}`);
-  //     setImg(res.data[0].img.replace("images/", ""));
-  //     //setImg(res.data);
-  //   };
-  //   getDataBack();
-  // }, [loadImage]);
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   // console.log(e.target[0].value);
-
-  //   const formData = new FormData();
-  //   formData.append("image", img);
-  //   // console.log(formData);
-  //   //const config = { headers: { "Content-Type": "multipart/form-data" } };
-  //   const res = await axios.post("http://localhost:5010", formData);
-  //   setLoadImage(res.data[0].img.replace("images/", ""));
-  // };
-
-  // const handleLogout = () => {
-  //   setToken(null);
-  //   navigate("/login");
-  //   localStorage.removeItem("token");
-  // };
-
-  // const columns = [
-  //   {
-  //     accessorKey: "status",
-  //     header: "status",
-  //   },
-  // ];
-
+  const getBestUsers = async () => {
+    const res = await axios.get("http://localhost:5010/user/best-users");
+    setBestUsers(res.data);
+  };
   useEffect(() => {
-    const getMostValuableProducts = async () => {
-      const res = await axios.get("http://localhost:5010/product/priciest");
-      setMostValuable(res.data);
-    };
     getMostValuableProducts();
+    getBestUsers();
   }, []);
-
-  //console.log(img);
 
   return (
     <>
@@ -148,7 +108,7 @@ function Dashboard() {
       </Button>
       <DataTable
         columns={columns}
-        data={MostValuable}
+        data={bestUsers.slice(0, 5)}
         title={"Trending Categories"}
       />
 

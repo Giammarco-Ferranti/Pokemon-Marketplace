@@ -1,6 +1,7 @@
 import DataTable from "@/Layouts/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const defaultData = [
   {
@@ -54,10 +55,18 @@ const columns = [
 ];
 
 const Users = () => {
+  const [bestUsers, setBestUsers] = useState([]);
+  const getBestUsers = async () => {
+    const res = await axios.get("http://localhost:5010/user/best-users");
+    setBestUsers(res.data);
+  };
+  useEffect(() => {
+    getBestUsers();
+  }, []);
   return (
     <div className="flex flex-col h-screen w-full justify-start items-center mt-20 p-4">
       <h1 className="text-3xl self-start">Top users</h1>
-      <DataTable columns={columns} data={defaultData} />
+      <DataTable columns={columns} data={bestUsers} />
     </div>
   );
 };
