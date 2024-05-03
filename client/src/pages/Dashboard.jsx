@@ -68,7 +68,9 @@ function Dashboard() {
   const [MostValuable, setMostValuable] = useState([]);
   const [bestUsers, setBestUsers] = useState([]);
   const getMostValuableProducts = async () => {
-    const res = await axios.get("http://localhost:5010/product/priciest");
+    const res = await axios.get(
+      "http://localhost:5010/product/products/most-expensive"
+    );
     setMostValuable(res.data);
   };
 

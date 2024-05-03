@@ -15,7 +15,6 @@ export const updateProduct = async (req, res) => {
         [productId]
       );
 
-      console.log(productExist);
       if (productExist.rows[0].exists) {
         let query = "UPDATE products SET";
         filterData.forEach(

@@ -40,7 +40,7 @@ const Routes = () => {
           element: <Product />,
         },
         {
-          path: "/explore",
+          path: "/explore/:name",
           element: <Explore />,
         },
         {

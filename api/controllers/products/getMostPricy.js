@@ -12,5 +12,6 @@ export const getMostPricy = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send(error);
+    console.log(error);
   }
 };
