@@ -173,7 +173,7 @@ const Listing = () => {
 
   const getData = async () => {
     const localData = JSON.parse(localStorage.getItem("user"));
-    const userId = localData.user.rows[0].id;
+    const userId = localData.id;
     const res = await axios.get(
       `http://localhost:5010/product/products/${userId}`
     );

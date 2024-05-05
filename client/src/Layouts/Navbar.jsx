@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.jpg";
 import axios from "axios";
+import { useAuth } from "@/utils/Auth/AuthContext";
 
 const NavbarLayout = () => {
   const navigate = useNavigate();
-  const [token] = useState(localStorage.getItem("token"));
+  const { token } = useAuth();
   const [query, setQuery] = useState();
   const [queryData, setQueryData] = useState([]);
   console.log(queryData);

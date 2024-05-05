@@ -32,12 +32,12 @@ export const signUp = async (req, res) => {
         [uuidv4(), data.username, data.email, data.password]
       );
       const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
-        expiresIn: "1h",
+        expiresIn: 1800, //30 minutes
       });
 
       const response = {
         token: token,
-        user: user.rows,
+        user: user.rows[0],
       };
 
       res.status(200).send(response);

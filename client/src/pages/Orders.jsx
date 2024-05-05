@@ -251,7 +251,8 @@ const Orders = () => {
 
   const getOrders = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user.user.rows[0].id;
+    const userId = user.id;
+    console.log(userId);
     const payload = {
       userId: userId,
     };

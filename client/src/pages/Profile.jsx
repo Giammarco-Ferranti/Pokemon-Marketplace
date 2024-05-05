@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/utils/Auth/AuthContext";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const token = useState(localStorage.getItem("token"));
   const username = useState(localStorage.getItem("user"));
+  const { token, setToken } = useAuth();
   const navigate = useNavigate();
   return (
     <div className="flex flex-col w-full h-screen justify-center items-center gap-10">
@@ -29,7 +30,7 @@ const Profile = () => {
           <Button
             onClick={() => {
               localStorage.removeItem("user");
-              localStorage.removeItem("token");
+              setToken(null);
               navigate("/");
             }}
             className="w-fit"

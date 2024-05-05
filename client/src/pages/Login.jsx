@@ -26,7 +26,8 @@ const Login = () => {
         password,
       });
       console.log(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
       navigate(-1);
       setToken(res.data.token);
     } catch (error) {

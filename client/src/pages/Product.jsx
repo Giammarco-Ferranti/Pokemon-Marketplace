@@ -17,7 +17,7 @@ const Product = () => {
 
   const handleOrder = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user.user.rows[0].id;
+    const userId = user.id;
     const payload = {
       productId: productId,
       userId: userId,

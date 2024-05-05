@@ -17,12 +17,12 @@ export const login = async (req, res) => {
       const isSame = await bcrypt.compare(password, user.rows[0].password);
       if (isSame) {
         const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
-          expiresIn: 1800,
+          expiresIn: 1800, //30 minutes
         });
         //send user data
         const response = {
           token: token,
-          user: user,
+          user: user.rows[0],
         };
 
         return res.status(200).send(response);

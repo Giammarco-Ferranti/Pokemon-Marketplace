@@ -28,7 +28,7 @@ const Registration = () => {
         password,
       });
       console.log(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       navigate("/");
       setToken(res.data.token);
     } catch (error) {
