@@ -1,4 +1,5 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const AuthContext = createContext();
@@ -11,6 +12,13 @@ const AuthProvider = ({ children }) => {
   const setToken = (newToken) => {
     setToken_(newToken);
   };
+
+  if (token) {
+    const { exp } = jwtDecode(token);
+    if (Date.now() >= exp * 1000) {
+      localStorage.removeItem("token");
+    }
+  }
 
   useEffect(() => {
     if (token) {

@@ -278,12 +278,12 @@ const Listing = () => {
                 type="file"
                 onChange={(e) => setImg(e.target.files[0])}
               /> */}
-                <Label htmlFor="image">Image</Label>
+                <Label htmlFor="imgFile">Image</Label>
                 <Input
-                  id="image"
+                  id="imgFile"
                   type="file"
-                  name="image"
-                  accept="image/*"
+                  name="imgFile"
+                  accept="image/png, image/jpeg, image/gif, image/webp"
                   onChange={(e) => setImg(e.target.files[0])}
                 />
                 <Label htmlFor="name">Name</Label>
@@ -360,12 +360,12 @@ const Listing = () => {
                 type="file"
                 onChange={(e) => setImg(e.target.files[0])}
               /> */}
-                <Label htmlFor="image">Image</Label>
+                <Label htmlFor="imgFile">Image</Label>
                 <Input
-                  id="image"
+                  id="imgFile"
                   type="file"
-                  name="image"
-                  accept="image/*"
+                  name="imgFile"
+                  accept="image/png, image/jpeg, image/gif, image/webp"
                   onChange={(e) => setImg(e.target.files[0])}
                 />
                 <Label htmlFor="name">Name</Label>

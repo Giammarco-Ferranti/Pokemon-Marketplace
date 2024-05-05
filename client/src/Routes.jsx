@@ -12,6 +12,7 @@ import Listing from "./pages/Listing.jsx";
 import Footer from "./Layouts/Footer.jsx";
 import Explore from "./pages/Explore.jsx";
 import Users from "./pages/Users.jsx";
+import { jwtDecode } from "jwt-decode";
 
 const Routes = () => {
   const Root = () => {
@@ -24,6 +25,12 @@ const Routes = () => {
     );
   };
   const { token } = useAuth();
+  // if (token) {
+  //   const { exp } = jwtDecode(token);
+  //   if (Date.now() >= exp * 1000) {
+  //     return localStorage.removeItem("token");
+  //   }
+  // }
 
   // Define public routes accessible to all users
   const routesForPublic = [
