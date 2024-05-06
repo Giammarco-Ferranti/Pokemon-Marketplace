@@ -8,24 +8,9 @@ import Grid from "@/Layouts/Grid";
 
 import DataTable from "@/Layouts/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import Footer from "@/Layouts/Footer";
 import { Button } from "@/components/ui/button";
-
-const defaultData = [
-  {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
-  },
-  {
-    id: "489e1d42",
-    amount: 125,
-    status: "processing",
-    email: "example@gmail.com",
-  },
-];
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchData } from "@/utils/fetchData";
 
 const columnHelper = createColumnHelper();
 
@@ -65,28 +50,23 @@ const columns = [
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [MostValuable, setMostValuable] = useState([]);
-  const [bestUsers, setBestUsers] = useState([]);
-  const getMostValuableProducts = async () => {
-    const res = await axios.get(
-      "http://localhost:5010/product/products/most-expensive"
-    );
-    setMostValuable(res.data);
-  };
 
-  const getBestUsers = async () => {
-    const res = await axios.get("http://localhost:5010/user/best-users");
-    setBestUsers(res.data);
-  };
-  useEffect(() => {
-    getMostValuableProducts();
-    getBestUsers();
-  }, []);
+  const mostValuable = useQuery({
+    queryKey: ["most-expensive"],
+    queryFn: () => fetchData("get", "/product/products/most-expensive"),
+  });
+
+  const bestUsers = useQuery({
+    queryKey: ["best-users"],
+    queryFn: () => fetchData("get", "/user/best-users"),
+  });
+
+  console.log(mostValuable, bestUsers);
 
   return (
     <>
       <Hero />
-      <Grid img={MostValuable} title={"Best"} />
+      <Grid img={mostValuable.data ? mostValuable.data : []} title={"Best"} />
       <Button
         onClick={() => navigate("/explore")}
         variant="outline"
@@ -110,7 +90,7 @@ function Dashboard() {
       </Button>
       <DataTable
         columns={columns}
-        data={bestUsers.slice(0, 5)}
+        data={bestUsers.data ? bestUsers.data.slice(0, 5) : []}
         title={"Trending Categories"}
       />
 

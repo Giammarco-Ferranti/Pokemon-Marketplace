@@ -33,120 +33,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const defaultData = [
-  {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
-  },
-  {
-    id: "489e1d42",
-    amount: 125,
-    status: "processing",
-    email: "example@gmail.com",
-  },
-];
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchData } from "@/utils/fetchData";
 
 const columnHelper = createColumnHelper();
 
-// const columns = [
-//   columnHelper.accessor("index", {
-//     id: "index",
-//     header: () => "#",
-//     cell: ({ row }) => {
-//       return <h3>{row.index + 1}</h3>;
-//     },
-//   }),
-//   columnHelper.accessor("name", {
-//     id: "Image",
-//     header: () => "Image",
-//     cell: ({ row }) => {
-//       return (
-//         <img
-//           src={`http://localhost:5010/${row.original.product_image}`}
-//           className="w-10"
-//         />
-//       );
-//     },
-//   }),
-//   columnHelper.accessor("Name", {
-//     id: "Name",
-//     header: () => "Name",
-//     cell: ({ row }) => {
-//       return <h3>{row.original.product_name}</h3>;
-//     },
-//   }),
-//   columnHelper.accessor("product_price", {
-//     id: "price",
-//     header: () => "Price",
-//     cell: (info) => info.getValue(),
-//   }),
-//   columnHelper.accessor("order_status", {
-//     id: "status",
-//     header: () => "Status",
-//     cell: ({ row }) => {
-//       return (
-//         <div className="flex flex-row gap-3 items-center justify-start">
-//           <h1>{row.original.order_status}</h1>
-//           <svg
-//             xmlns="http://www.w3.org/2000/svg"
-//             fill="none"
-//             viewBox="0 0 24 24"
-//             strokeWidth={1.5}
-//             stroke="currentColor"
-//             className="w-4 h-4 hover:cursor-pointer"
-//           >
-//             <path
-//               strokeLinecap="round"
-//               strokeLinejoin="round"
-//               d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-//             />
-//           </svg>
-//         </div>
-//       );
-//     },
-//   }),
-//   columnHelper.accessor("order_date", {
-//     id: "date",
-//     header: () => "Date",
-//     cell: ({ row }) => {
-//       return <h1 key={row.order_id}>{row.original.order_date}</h1>;
-//     },
-//   }),
-//   columnHelper.accessor("delete", {
-//     id: "date",
-//     header: () => "",
-//     cell: ({ row }) => {
-//       return (
-//         <svg
-//           key={row.order_id}
-//           xmlns="http://www.w3.org/2000/svg"
-//           fill="none"
-//           viewBox="0 0 24 24"
-//           strokeWidth={1.5}
-//           stroke="currentColor"
-//           className="w-6 h-6 text-red-500"
-//         >
-//           <path
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//             d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-//           />
-//         </svg>
-//       );
-//     },
-//   }),
-// ];
 const Orders = () => {
   const [open, setOpen] = useState(false);
   const { width } = useWindowDimensions();
-  console.log(open);
   const [orders, setOrders] = useState([]);
   const [orderId, setOrderId] = useState();
   const [status, setStatus] = useState("");
-  console.log(orderId);
 
   const columns = [
     columnHelper.accessor("index", {
@@ -227,7 +124,7 @@ const Orders = () => {
       id: "date",
       header: () => "",
       cell: ({ row }) => {
-        return row.original.order_status === "shipped" ? (
+        return row.original.order_status === "Shipped" ? (
           <svg
             key={row.order_id}
             xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +133,9 @@ const Orders = () => {
             strokeWidth={1.5}
             stroke="currentColor"
             className="w-6 h-6 text-red-500"
-            onClick={() => handleDelete(row.original.order_id)}
+            onClick={() => {
+              mutation2.mutate(row.original.order_id);
+            }}
           >
             <path
               strokeLinecap="round"
@@ -249,43 +148,43 @@ const Orders = () => {
     }),
   ];
 
-  const getOrders = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user.id;
-    console.log(userId);
-    const payload = {
-      userId: userId,
-    };
-    const res = await axios.post(
-      "http://localhost:5010/order/get-all",
-      payload
-    );
-    setOrders(res.data);
-    console.log(res.data);
-  };
+  const getOrders = useQuery({
+    queryKey: ["get-orders"],
+    queryFn: () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user.id;
+      const payload = {
+        userId: userId,
+      };
+      return fetchData("post", "/order/get-all", payload);
+    },
+  });
 
-  const updateOrders = async (orderId, status) => {
+  const mutation = useMutation({
+    mutationFn: async (payload) => {
+      await fetchData("post", "/order/update-status", payload);
+      getOrders.refetch();
+    },
+  });
+  const mutation2 = useMutation({
+    mutationFn: async (orderId) => {
+      await fetchData("delete", `/order/delete/${orderId}`);
+      getOrders.refetch();
+    },
+  });
+  console.log(mutation2);
+
+  const updateOrders = (orderId, status) => {
     const payload = {
       orderId: orderId,
       value: status,
     };
-    const res = await axios.post(
-      "http://localhost:5010/order/update-status",
-      payload
-    );
-    console.log(res);
+    mutation.mutate(payload);
   };
 
-  const handleDelete = async (orderId) => {
-    const res = await axios.delete(
-      `http://localhost:5010/order/delete/${orderId}`
-    );
-    console.log(res);
-  };
-
-  useEffect(() => {
-    getOrders();
-  }, []);
+  // useEffect(() => {
+  //   getOrders();
+  // }, []);
   return (
     <div
       className="flex flex-col w-full p-4 h-screen justify-start
@@ -358,7 +257,9 @@ const Orders = () => {
       )}
 
       <h1 className="text-3xl font-semibold">Your orders</h1>
-      <DataTable columns={columns} data={orders} />
+      {getOrders.data ? (
+        <DataTable columns={columns} data={getOrders.data} />
+      ) : null}
     </div>
   );
 };

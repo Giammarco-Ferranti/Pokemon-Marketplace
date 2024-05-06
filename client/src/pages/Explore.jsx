@@ -1,36 +1,28 @@
 import Grid from "@/Layouts/Grid";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { fetchData } from "@/utils/fetchData";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { useParams } from "react-router-dom";
 
 const Explore = () => {
   const { name } = useParams();
-  console.log(name);
-  const [AllImg, setAllImg] = useState([]);
-  console.log(AllImg);
-  useEffect(() => {
-    const getAllImages = async () => {
-      const res = await axios.get("http://localhost:5010/product/all");
-      setAllImg(res.data);
-      console.log(res);
-    };
 
-    const getSearchImages = async (q) => {
-      const res = await axios.get(
-        `http://localhost:5010/product/products/search/?q=${q}`
-      );
-      setAllImg(res.data);
-    };
+  const getImages = useQuery({
+    queryKey: ["images-filtered", name],
+    queryFn: () => {
+      if (name === "all" || name === "") {
+        return fetchData("get", "/product/all");
+      } else {
+        return fetchData("get", `/product/products/search/?q=${name}`);
+      }
+    },
+  });
 
-    if (name === "all") {
-      getAllImages();
-    } else {
-      getSearchImages(name);
-    }
-  }, [name]);
   return (
     <div className="flex flex-col h-full w-full justify-start items-center mt-20 p-4">
-      <Grid img={AllImg} title={"Top Users"} />
+      {getImages.data ? (
+        <Grid img={getImages.data} title={"Top Users"} />
+      ) : null}
     </div>
   );
 };

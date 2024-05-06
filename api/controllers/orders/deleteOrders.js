@@ -11,8 +11,7 @@ export const deleteOrder = async (req, res) => {
 
     if (checkStatus.rows[0].status === "Delivered") {
       return res.status(400).send("Order already delivered");
-    }
-    if (checkStatus.rows[0].status === "shipped") {
+    } else if (checkStatus.rows[0].status === "Shipped") {
       const deleteOrder = await pool.query(
         `
           DELETE FROM orders

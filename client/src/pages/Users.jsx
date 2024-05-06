@@ -1,22 +1,8 @@
 import DataTable from "@/Layouts/DataTable";
+import { fetchData } from "@/utils/fetchData";
+import { useQuery } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-
-const defaultData = [
-  {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
-  },
-  {
-    id: "489e1d42",
-    amount: 125,
-    status: "processing",
-    email: "example@gmail.com",
-  },
-];
+import React from "react";
 
 const columnHelper = createColumnHelper();
 
@@ -55,18 +41,17 @@ const columns = [
 ];
 
 const Users = () => {
-  const [bestUsers, setBestUsers] = useState([]);
-  const getBestUsers = async () => {
-    const res = await axios.get("http://localhost:5010/user/best-users");
-    setBestUsers(res.data);
-  };
-  useEffect(() => {
-    getBestUsers();
-  }, []);
+  const getUsers = useQuery({
+    queryKey: ["users"],
+    queryFn: () => fetchData("get", `/user/best-users`),
+  });
+
   return (
     <div className="flex flex-col h-screen w-full justify-start items-center mt-20 p-4">
       <h1 className="text-3xl self-start">Top users</h1>
-      <DataTable columns={columns} data={bestUsers} />
+      {getUsers.data ? (
+        <DataTable columns={columns} data={getUsers.data} />
+      ) : null}
     </div>
   );
 };

@@ -16,8 +16,12 @@ const NavbarLayout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("hello");
-    navigate(`/explore/${query}`);
+    console.log(query);
+    if (query === undefined || query === "") {
+      navigate(`explore/all`);
+    } else {
+      navigate(`/explore/${query}`);
+    }
     // const res = await axios.get(
     //   `http://localhost:5010/product/products/search/?q=${q}`
     // );
