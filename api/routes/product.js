@@ -1,12 +1,15 @@
 import express from "express";
-import { getProduct, uploadProduct } from "../controllers/index.js";
-import { getAllProducts } from "../controllers/products/getAllProducts.js";
 import upload from "../middlewares/multer/upload.js";
-import { deleteProduct } from "../controllers/products/deleteProduct.js";
-import { updateProduct } from "../controllers/products/updateProduct.js";
-import { getMostPricy } from "../controllers/products/getMostPricy.js";
-import { getProductsByUser } from "../controllers/products/getProductsByUser.js";
-import { searchProduct } from "../controllers/products/searchProduct.js";
+import {
+  deleteProduct,
+  getAllProducts,
+  getMostPricy,
+  getProduct,
+  getProductsByUser,
+  searchProduct,
+  updateProduct,
+  uploadProduct,
+} from "../controllers/index.js";
 
 const router = express.Router();
 
