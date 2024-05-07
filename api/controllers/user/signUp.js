@@ -2,13 +2,17 @@ import pool from "../../db/connection.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { filterRequest } from "../../utils/filterRequest.js";
 
 const SECRET_KEY = "lhbubwdnjoiwjnj";
 
 export const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
+    const filterData = filterRequest(req.body);
+    if (filterData.length === 0) {
+      return res.status(400).send("Request cannot be empty");
+    }
     const data = {
       username,
       email,

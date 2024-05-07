@@ -6,38 +6,32 @@ import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.jpg";
 import axios from "axios";
 import { useAuth } from "@/utils/Auth/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { fetchData } from "@/utils/fetchData";
 
 const NavbarLayout = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
   const [query, setQuery] = useState();
-  const [queryData, setQueryData] = useState([]);
-  console.log(queryData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(query);
     if (query === undefined || query === "") {
       navigate(`explore/all`);
     } else {
       navigate(`/explore/${query}`);
     }
-    // const res = await axios.get(
-    //   `http://localhost:5010/product/products/search/?q=${q}`
-    // );
   };
 
-  const getDataByQuery = async (q) => {
-    if (q !== undefined && q !== "") {
-      const res = await axios.get(
-        `http://localhost:5010/product/products/search/?q=${q}`
-      );
-      setQueryData(res.data);
-    }
-  };
-  useEffect(() => {
-    getDataByQuery(query);
-  }, [query]);
+  const getDataByQuery = useQuery({
+    queryKey: ["get-data-by-query", query],
+    queryFn: () => {
+      if (query !== undefined && query !== "") {
+        return fetchData("get", `/product/products/search/?q=${query}`);
+      }
+    },
+    enabled: query !== undefined && query !== "",
+  });
 
   return (
     <div className="z-10 flex flex-row justify-center items-center w-full h-fit bg-white border-b  fixed top-0 py-2 px-2 bg-white/40 backdrop-blur-lg">
@@ -71,31 +65,35 @@ const NavbarLayout = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </form>
-          {queryData.length != 0 && query !== "" ? (
+          {query !== "" && getDataByQuery.data !== undefined ? (
             <div className="absolute top-14 left-0 border w-full h-fit bg-white  shadow-md rounded-lg p-5 flex flex-col gap-4">
-              {queryData.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    className="flex flex-row w-full justify-between items-center"
-                  >
+              {getDataByQuery.data.length > 0 ? (
+                getDataByQuery.data.map((item) => {
+                  return (
                     <div
-                      className="flex flex-row gap-2 items-center"
-                      onClick={() => {
-                        navigate(`/product/${item.id}`);
-                      }}
+                      key={item.id}
+                      className="flex flex-row w-full justify-between items-center"
                     >
-                      <img
-                        alt="product-image"
-                        src={`http://localhost:5010/${item.img_path}`}
-                        className="w-10"
-                      />
-                      <h3 className="truncate">{item.name}</h3>
+                      <div
+                        className="flex flex-row gap-2 items-center"
+                        onClick={() => {
+                          navigate(`/product/${item.id}`);
+                        }}
+                      >
+                        <img
+                          alt="product-image"
+                          src={`http://localhost:5010/${item.img_path}`}
+                          className="w-10"
+                        />
+                        <h3 className="truncate">{item.name}</h3>
+                      </div>
+                      <h3 className="truncate">{item.price}</h3>
                     </div>
-                    <h3 className="truncate">{item.price}</h3>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <h1>No Products</h1>
+              )}
             </div>
           ) : null}
 

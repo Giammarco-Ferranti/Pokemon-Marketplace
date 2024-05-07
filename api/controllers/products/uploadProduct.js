@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const uploadProduct = async (req, res) => {
   const { filename } = req.file;
-  const { id, name, price, description, rarity } = req.body;
+  const { id, name, price, description, rarity, status } = req.body;
   console.log(req.body, filename);
   try {
     const userExist = await pool.query(
@@ -16,10 +16,10 @@ export const uploadProduct = async (req, res) => {
       const insertIntoDb = await pool.query(
         `
       INSERT INTO products 
-      (id, name, owner, price, description, created_at, img_path, rarity)
-      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, $6, $7) RETURNING *
+      (id, name, owner, price, description, created_at, img_path, rarity, status)
+      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, $6, $7, $8) RETURNING *
     `,
-        [uuidv4(), name, id, price, description, filename, rarity]
+        [uuidv4(), name, id, price, description, filename, rarity, status]
       );
 
       res.status(200).send(insertIntoDb.rows);

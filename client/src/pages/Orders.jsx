@@ -5,6 +5,17 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -41,9 +52,9 @@ const columnHelper = createColumnHelper();
 const Orders = () => {
   const [open, setOpen] = useState(false);
   const { width } = useWindowDimensions();
-  const [orders, setOrders] = useState([]);
   const [orderId, setOrderId] = useState();
   const [status, setStatus] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
 
   const columns = [
     columnHelper.accessor("index", {
@@ -90,36 +101,30 @@ const Orders = () => {
             className="flex flex-row gap-3 items-center justify-start"
           >
             <h1>{row.original.order_status}</h1>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-4 h-4 hover:cursor-pointer"
-              onClick={() => {
-                setOpen(true);
-                setOrderId(row.original.order_id);
-              }}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-              />
-            </svg>
+            {row.original.order_status === "Shipped" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4 hover:cursor-pointer"
+                onClick={() => {
+                  setOpen(true);
+                  setOrderId(row.original.order_id);
+                }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                />
+              </svg>
+            ) : null}
           </div>
         );
       },
     }),
-    // columnHelper.accessor("order_date", {
-    //   id: "date",
-    //   header: () => "Date",
-    //   cell: ({ row }) => {
-    //     const data = new Date(row.original.order_date).toLocaleDateString();
-    //     return <h1 key={row.order_id}>{data}</h1>;
-    //   },
-    // }),
     columnHelper.accessor("delete", {
       id: "date",
       header: () => "",
@@ -132,9 +137,10 @@ const Orders = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 text-red-500"
+            className="w-6 h-6 text-red-500 cursor-pointer"
             onClick={() => {
-              mutation2.mutate(row.original.order_id);
+              setOpenDialog(true);
+              setOrderId(row.original.order_id);
             }}
           >
             <path
@@ -160,36 +166,56 @@ const Orders = () => {
     },
   });
 
-  const mutation = useMutation({
+  const handleUpdate = useMutation({
     mutationFn: async (payload) => {
       await fetchData("post", "/order/update-status", payload);
       getOrders.refetch();
     },
   });
-  const mutation2 = useMutation({
+  const handleDelete = useMutation({
     mutationFn: async (orderId) => {
       await fetchData("delete", `/order/delete/${orderId}`);
       getOrders.refetch();
     },
   });
-  console.log(mutation2);
 
   const updateOrders = (orderId, status) => {
     const payload = {
       orderId: orderId,
       value: status,
     };
-    mutation.mutate(payload);
+    handleUpdate.mutate(payload);
   };
 
-  // useEffect(() => {
-  //   getOrders();
-  // }, []);
   return (
     <div
       className="flex flex-col w-full p-4 h-screen justify-start
      items-center mt-20"
     >
+      <AlertDialog open={openDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              product and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenDialog(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleDelete.mutate(orderId);
+                setOpenDialog(false);
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {width < 990 ? (
         <Drawer open={open} onOpenChange={setOpen}>
           <DrawerContent className="h-[90%]">
@@ -257,9 +283,11 @@ const Orders = () => {
       )}
 
       <h1 className="text-3xl font-semibold">Your orders</h1>
-      {getOrders.data ? (
-        <DataTable columns={columns} data={getOrders.data} />
-      ) : null}
+
+      <DataTable
+        columns={columns}
+        data={getOrders.data ? getOrders.data : []}
+      />
     </div>
   );
 };

@@ -12,12 +12,11 @@ import Listing from "./pages/Listing.jsx";
 import Footer from "./Layouts/Footer.jsx";
 import Explore from "./pages/Explore.jsx";
 import Users from "./pages/Users.jsx";
-import { jwtDecode } from "jwt-decode";
 
 const Routes = () => {
   const Root = () => {
     return (
-      <div className="flex flex-col items-center justify-start w-screen max-w-screen-xl ">
+      <div className="flex flex-col items-center justify-start w-screen max-w-screen-xl scroll-smooth">
         <NavbarLayout />
         <Outlet />
         <Footer />
@@ -25,14 +24,7 @@ const Routes = () => {
     );
   };
   const { token } = useAuth();
-  // if (token) {
-  //   const { exp } = jwtDecode(token);
-  //   if (Date.now() >= exp * 1000) {
-  //     return localStorage.removeItem("token");
-  //   }
-  // }
 
-  // Define public routes accessible to all users
   const routesForPublic = [
     {
       path: "/",
@@ -66,11 +58,10 @@ const Routes = () => {
     },
   ];
 
-  // Define routes accessible only to authenticated users
   const routesForAuthenticatedOnly = [
     {
       path: "/",
-      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      element: <ProtectedRoute />,
       children: [
         {
           path: "/profile/",
@@ -106,7 +97,6 @@ const Routes = () => {
     },
   ];
 
-  // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
       path: "/login",
@@ -118,14 +108,12 @@ const Routes = () => {
     },
   ];
 
-  // Combine and conditionally include routes based on authentication status
   const router = createBrowserRouter([
     ...routesForPublic,
     ...(!token ? routesForNotAuthenticatedOnly : []),
     ...routesForAuthenticatedOnly,
   ]);
 
-  // Provide the router configuration using RouterProvider
   return <RouterProvider router={router} />;
 };
 

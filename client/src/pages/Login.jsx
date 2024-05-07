@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useMutation } from "@tanstack/react-query";
+import { fetchData } from "@/utils/fetchData";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,22 +21,41 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { setToken } = useAuth();
-  const handleSubmit = async () => {
-    try {
-      const res = await axios.post("http://localhost:5010/user/login", {
-        email,
-        password,
-      });
-      console.log(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate(-1);
-      setToken(res.data.token);
-    } catch (error) {
-      console.log(error);
-      setToken(null);
-    }
-  };
+  const mutationSubmit = useMutation({
+    mutationFn: async () => {
+      try {
+        const payload = {
+          email: email,
+          password: password,
+        };
+        const res = await fetchData("post", "/user/login", payload);
+        console.log(res.data);
+        localStorage.setItem("user", JSON.stringify(res.user));
+        navigate(-1);
+        setToken(res.token);
+      } catch (error) {
+        console.log(error);
+        setToken(null);
+      }
+    },
+  });
+  // const handleSubmit = async () => {
+  //   try {
+  //     const res = await axios.post("http://localhost:5010/user/login", {
+  //       email,
+  //       password,
+  //     });
+  //     console.log(res.data);
+  //     localStorage.setItem("user", JSON.stringify(res.data.user));
+
+  //     navigate(-1);
+  //     setToken(res.data.token);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setToken(null);
+  //   }
+  // };
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <Card className="mx-auto max-w-sm">
@@ -73,7 +94,11 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" onClick={handleSubmit}>
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={() => mutationSubmit.mutate()}
+            >
               Login
             </Button>
           </div>

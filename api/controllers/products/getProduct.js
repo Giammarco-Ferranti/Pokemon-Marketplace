@@ -2,10 +2,12 @@ import pool from "../../db/connection.js";
 
 export const getProduct = async (req, res) => {
   const { productId } = req.params;
-  console.log(productId);
   try {
     const getProduct = await pool.query(
-      "SELECT * FROM products WHERE id = $1",
+      `SELECT p.*, u.username AS user_name
+        FROM products p
+        JOIN users u ON p.owner = u.id
+        WHERE p.id = $1;`,
       [productId]
     );
 

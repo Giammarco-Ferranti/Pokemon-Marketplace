@@ -2,6 +2,7 @@ import pool from "../../db/connection.js";
 
 export const deleteOrder = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   try {
     const checkStatus = await pool.query(
       `SELECT status FROM orders WHERE id = $1`,
@@ -28,6 +29,6 @@ export const deleteOrder = async (req, res) => {
       }
     }
   } catch (error) {
-    return res.statu(500).send(error);
+    return res.status(500).send(error);
   }
 };

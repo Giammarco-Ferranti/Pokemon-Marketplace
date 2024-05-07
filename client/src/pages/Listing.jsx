@@ -7,6 +7,17 @@ import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -35,25 +46,13 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import useWindowDimensions from "@/hooks/useWindowWidth";
-
-const defaultData = [
-  {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
-  },
-  {
-    id: "489e1d42",
-    amount: 125,
-    status: "processing",
-    email: "example@gmail.com",
-  },
-];
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchData } from "@/utils/fetchData";
 
 const columnHelper = createColumnHelper();
 
 const Listing = () => {
+  const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const { width } = useWindowDimensions();
   const [img, setImg] = useState();
@@ -61,10 +60,8 @@ const Listing = () => {
   const [description, setDescription] = useState();
   const [price, setPrice] = useState();
   const [rarity, setRarity] = useState();
-  const [listings, setListings] = useState([]);
   const [openUpdate, setOpenUpdate] = useState();
   const [productId, setProductId] = useState();
-
   const [newName, setNewName] = useState();
   const [newDescription, setNewDescription] = useState();
   const [newPrice, setNewPrice] = useState();
@@ -73,6 +70,7 @@ const Listing = () => {
   const columns = [
     columnHelper.accessor("index", {
       id: "index",
+      enableSorting: false,
       header: () => "#",
       cell: ({ row }) => {
         return <h3>{row.index + 1}</h3>;
@@ -80,6 +78,7 @@ const Listing = () => {
     }),
     columnHelper.accessor("img_path", {
       id: "Image",
+      enableSorting: false,
       header: () => "Image",
       cell: ({ row }) => {
         return (
@@ -92,6 +91,7 @@ const Listing = () => {
     }),
     columnHelper.accessor("name", {
       id: "Name",
+      enableSorting: false,
       header: () => "Name",
       cell: ({ row }) => {
         return <h3>{row.original.name}</h3>;
@@ -99,28 +99,39 @@ const Listing = () => {
     }),
     columnHelper.accessor("description", {
       id: "description",
+      enableSorting: false,
       header: () => "Description",
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor("price", {
       id: "price",
+      enableSorting: false,
       header: () => "Price",
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor("status", {
       id: "status",
+      enableSorting: false,
       header: () => "Status",
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor("created_at", {
       id: "created_at",
-      header: () => "Created",
+      enableSorting: true,
+      header: () => {
+        return (
+          <div className="flex flex-row">
+            <h3>Created</h3>
+          </div>
+        );
+      },
       cell: ({ row }) => {
         return new Date(row.original.created_at).toLocaleDateString();
       },
     }),
     columnHelper.accessor("update", {
       id: "update",
+      enableSorting: false,
       header: () => "",
       cell: ({ row }) => {
         return row.original.status !== "sold" ? (
@@ -147,6 +158,7 @@ const Listing = () => {
     }),
     columnHelper.accessor("delete", {
       id: "delete",
+      enableSorting: false,
       header: () => "",
       cell: ({ row }) => {
         return row.original.status !== "sold" ? (
@@ -157,8 +169,11 @@ const Listing = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 text-red-500"
-            onClick={() => handleDelete(row.original.id)}
+            className="w-6 h-6 text-red-500 cursor-pointer"
+            onClick={() => {
+              setOpenDialog(true);
+              setProductId(row.original.id);
+            }}
           >
             <path
               strokeLinecap="round"
@@ -171,42 +186,42 @@ const Listing = () => {
     }),
   ];
 
-  const getData = async () => {
-    const localData = JSON.parse(localStorage.getItem("user"));
-    const userId = localData.id;
-    const res = await axios.get(
-      `http://localhost:5010/product/products/${userId}`
-    );
-    setListings(res.data);
-    console.log(res.data);
-  };
+  const getData = useQuery({
+    queryKey: ["product-by-user"],
+    queryFn: () => {
+      const localData = JSON.parse(localStorage.getItem("user"));
+      const userId = localData.id;
+      return fetchData("get", `/product/products/${userId}`);
+    },
+  });
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const handleDelete = useMutation({
+    mutationFn: async (productId) => {
+      await fetchData("delete", `/product/delete/${productId}`);
+      getData.refetch();
+    },
+  });
 
-  const handleDelete = async (productId) => {
-    const res = await axios.delete(
-      `http://localhost:5010/product/delete/${productId}`
-    );
-    console.log(res);
-    if (res.status === 200) {
-      getData();
-    }
-  };
+  const mutationSubmit = useMutation({
+    mutationFn: async (payload) => {
+      await fetchData("post", "/product/products/upload/", payload);
+      getData.refetch();
+      setOpen(false);
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const localData = JSON.parse(localStorage.getItem("user"));
     const userId = localData.id;
     const formData = new FormData();
-    console.log(userId);
     const payload = {
       id: userId,
       name: name,
       price: price,
       description: description,
       rarity: rarity,
+      status: "Available",
     };
 
     formData.append("image", img);
@@ -214,50 +229,52 @@ const Listing = () => {
     for (const [key, value] of Object.entries(payload)) {
       formData.append(key, value);
     }
-    console.log(formData);
 
-    const res = await axios.post(
-      "http://localhost:5010/product/products/upload/",
-      formData
-    );
-    console.log(res);
-    if (res.status === 200) {
-      setOpen(false);
-      getData();
-    }
+    mutationSubmit.mutate(formData);
   };
+  console.log(mutationSubmit);
 
-  console.log(productId);
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    // const localData = JSON.parse(localStorage.getItem("user"));
-    // const userId = localData.user.rows[0].id;
-    // const formData = new FormData();
+  const mutationUpdate = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        name: newName,
+        price: newPrice,
+        description: newDescription,
+        rarity: newRarity,
+      };
 
-    const payload = {
-      name: newName,
-      price: newPrice,
-      description: newDescription,
-      rarity: newRarity,
-    };
-    console.log(payload, productId);
-
-    // for (const [key, value] of Object.entries(payload)) {
-    //   formData.append(key, value);
-    // }
-
-    const res = await axios.patch(
-      `http://localhost:5010/product/update/${productId}`,
-      payload
-    );
-    if (res.status === 200) {
+      await fetchData("patch", `/product/update/${productId}`, payload);
+      getData.refetch();
       setOpenUpdate(false);
-      getData();
-    }
-  };
+    },
+  });
 
   return (
     <div className="flex flex-col w-full h-screen justify-start items-center mt-20">
+      <AlertDialog open={openDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              product and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenDialog(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleDelete.mutate(productId);
+                setOpenDialog(false);
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <h1 className="text-3xl font-semibold">Your Listings</h1>
 
       <Button onClick={() => setOpen(true)}>Add new</Button>
@@ -272,14 +289,9 @@ const Listing = () => {
                 onSubmit={(e) => handleSubmit(e)}
                 className="w-fit h-fit flex flex-col gap-3"
               >
-                {/* <input
-                accept="image/*"
-                name="image"
-                type="file"
-                onChange={(e) => setImg(e.target.files[0])}
-              /> */}
                 <Label htmlFor="imgFile">Image</Label>
                 <Input
+                  required
                   id="imgFile"
                   type="file"
                   name="imgFile"
@@ -288,6 +300,7 @@ const Listing = () => {
                 />
                 <Label htmlFor="name">Name</Label>
                 <Input
+                  required
                   id="name"
                   type="text"
                   name="name"
@@ -296,19 +309,21 @@ const Listing = () => {
                 />
                 <Label htmlFor="description">Description</Label>
                 <Textarea
+                  required
                   id="description"
                   placeholder="Enter a description"
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 <Label htmlFor="price">Price</Label>
                 <Input
+                  required
                   id="price"
                   type="number"
                   name="price"
                   placeholder="10$"
                   onChange={(e) => setPrice(e.target.value)}
                 />
-                <Select onValueChange={(e) => setRarity(e)}>
+                <Select required onValueChange={(e) => setRarity(e)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Rarity" />
                   </SelectTrigger>
@@ -320,24 +335,6 @@ const Listing = () => {
                   </SelectContent>
                 </Select>
 
-                {/* <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="name"
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="description"
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <input
-                type="number"
-                className="border border-gray-300 rounded-lg"
-                placeholder="price"
-                onChange={(e) => setPrice(e.target.value)}
-              /> */}
                 <Button type="submit">Submit</Button>
               </form>
             </div>
@@ -354,14 +351,9 @@ const Listing = () => {
                 onSubmit={(e) => handleSubmit(e)}
                 className="w-fit h-fit flex flex-col gap-3"
               >
-                {/* <input
-                accept="image/*"
-                name="image"
-                type="file"
-                onChange={(e) => setImg(e.target.files[0])}
-              /> */}
                 <Label htmlFor="imgFile">Image</Label>
                 <Input
+                  required
                   id="imgFile"
                   type="file"
                   name="imgFile"
@@ -370,6 +362,7 @@ const Listing = () => {
                 />
                 <Label htmlFor="name">Name</Label>
                 <Input
+                  required
                   id="name"
                   type="text"
                   name="name"
@@ -378,19 +371,21 @@ const Listing = () => {
                 />
                 <Label htmlFor="description">Description</Label>
                 <Textarea
+                  required
                   id="description"
                   placeholder="Enter a description"
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 <Label htmlFor="price">Price</Label>
                 <Input
+                  required
                   id="price"
                   type="number"
                   name="price"
                   placeholder="10$"
                   onChange={(e) => setPrice(e.target.value)}
                 />
-                <Select onValueChange={(e) => setRarity(e)}>
+                <Select required onValueChange={(e) => setRarity(e)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Rarity" />
                   </SelectTrigger>
@@ -402,24 +397,6 @@ const Listing = () => {
                   </SelectContent>
                 </Select>
 
-                {/* <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="name"
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="description"
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <input
-                type="number"
-                className="border border-gray-300 rounded-lg"
-                placeholder="price"
-                onChange={(e) => setPrice(e.target.value)}
-              /> */}
                 <Button type="submit">Submit</Button>
               </form>
             </div>
@@ -435,15 +412,12 @@ const Listing = () => {
                 action="/"
                 method="post"
                 encType="multipart/form-data"
-                onSubmit={(e) => handleUpdate(e)}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  mutationUpdate.mutate();
+                }}
                 className="w-fit h-fit flex flex-col gap-3"
               >
-                {/* <input
-                accept="image/*"
-                name="image"
-                type="file"
-                onChange={(e) => setImg(e.target.files[0])}
-              /> */}
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
@@ -478,24 +452,6 @@ const Listing = () => {
                   </SelectContent>
                 </Select>
 
-                {/* <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="name"
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="description"
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <input
-                type="number"
-                className="border border-gray-300 rounded-lg"
-                placeholder="price"
-                onChange={(e) => setPrice(e.target.value)}
-              /> */}
                 <Button type="submit">Submit</Button>
               </form>
             </div>
@@ -509,16 +465,12 @@ const Listing = () => {
                 action="/"
                 method="post"
                 encType="multipart/form-data"
-                onSubmit={(e) => handleUpdate(e)}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  mutationUpdate.mutate();
+                }}
                 className="w-fit h-fit flex flex-col gap-3"
               >
-                {/* <input
-                accept="image/*"
-                name="image"
-                type="file"
-                onChange={(e) => setImg(e.target.files[0])}
-              /> */}
-
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
@@ -553,63 +505,13 @@ const Listing = () => {
                   </SelectContent>
                 </Select>
 
-                {/* <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="name"
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg"
-                placeholder="description"
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <input
-                type="number"
-                className="border border-gray-300 rounded-lg"
-                placeholder="price"
-                onChange={(e) => setPrice(e.target.value)}
-              /> */}
                 <Button type="submit">Submit</Button>
               </form>
             </div>
           </DialogContent>
         </Dialog>
       )}
-      <DataTable columns={columns} data={listings} />
-      {/* <form
-        action="/"
-        method="post"
-        encType="multipart/form-data"
-        onSubmit={handleSubmit}
-      >
-        <input
-          accept="image/*"
-          name="image"
-          type="file"
-          onChange={(e) => setImg(e.target.files[0])}
-        />
-        <input
-          type="text"
-          className="border border-gray-300 rounded-lg"
-          placeholder="name"
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          className="border border-gray-300 rounded-lg"
-          placeholder="description"
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          type="number"
-          className="border border-gray-300 rounded-lg"
-          placeholder="price"
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <input className="ml-5" type="submit" />
-      </form> */}
+      <DataTable columns={columns} data={getData.data ? getData.data : []} />
     </div>
   );
 };
