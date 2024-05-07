@@ -198,7 +198,7 @@ const Listing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const localData = JSON.parse(localStorage.getItem("user"));
-    const userId = localData.user.rows[0].id;
+    const userId = localData.id;
     const formData = new FormData();
     console.log(userId);
     const payload = {
