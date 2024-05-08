@@ -48,6 +48,7 @@ import { Input } from "@/components/ui/input";
 import useWindowDimensions from "@/hooks/useWindowWidth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
+import { toast } from "sonner";
 
 const columnHelper = createColumnHelper();
 
@@ -186,11 +187,11 @@ const Listing = () => {
     }),
   ];
 
+  const localData = JSON.parse(localStorage.getItem("user"));
+  const userId = localData.id;
   const getData = useQuery({
-    queryKey: ["product-by-user"],
+    queryKey: ["product-by-user", userId],
     queryFn: () => {
-      const localData = JSON.parse(localStorage.getItem("user"));
-      const userId = localData.id;
       return fetchData("get", `/product/products/${userId}`);
     },
   });
@@ -199,6 +200,7 @@ const Listing = () => {
     mutationFn: async (productId) => {
       await fetchData("delete", `/product/delete/${productId}`);
       getData.refetch();
+      toast("Order Deleted");
     },
   });
 
@@ -232,7 +234,6 @@ const Listing = () => {
 
     mutationSubmit.mutate(formData);
   };
-  console.log(mutationSubmit);
 
   const mutationUpdate = useMutation({
     mutationFn: async () => {

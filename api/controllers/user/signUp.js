@@ -3,8 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { filterRequest } from "../../utils/filterRequest.js";
-
-const SECRET_KEY = "lhbubwdnjoiwjnj";
+import "dotenv/config";
 
 export const signUp = async (req, res) => {
   try {
@@ -20,11 +19,11 @@ export const signUp = async (req, res) => {
     };
 
     const userFind = await pool.query(
-      `SELECT * FROM users WHERE username ILIKE $1`,
-      [data.username]
+      `SELECT * FROM users WHERE username ILIKE $1 OR email ILIKE $2`,
+      [data.username, data.email]
     );
     if (userFind.rows.length > 0) {
-      return res.status(400).send("Username, already taken");
+      return res.status(400).send("User, already taken");
     } else {
       const user = await pool.query(
         `INSERT INTO users (id, username, email, password)
@@ -35,9 +34,13 @@ export const signUp = async (req, res) => {
           `,
         [uuidv4(), data.username, data.email, data.password]
       );
-      const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
-        expiresIn: 1800, //30 minutes
-      });
+      const token = jwt.sign(
+        { id: user.rows[0].id },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn: 1800, //30 minutes
+        }
+      );
 
       const response = {
         token: token,

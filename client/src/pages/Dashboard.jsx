@@ -18,29 +18,31 @@ function Dashboard() {
         return <h3>{row.index + 1}</h3>;
       },
     }),
-    columnHelper.accessor("name", {
-      id: "Image",
-      header: () => "Image",
-      cell: ({ row }) => {
-        return (
-          <img
-            src={`http://localhost:5010/${row.original.img_path}`}
-            className="w-10"
-          />
-        );
-      },
-    }),
+    // columnHelper.accessor("name", {
+    //   id: "Image",
+    //   header: () => "Image",
+    //   cell: ({ row }) => {
+    //     return (
+    //       <img
+    //         src={`http://localhost:5010/${row.original.img_path}`}
+    //         className="w-10"
+    //       />
+    //     );
+    //   },
+    // }),
     columnHelper.accessor("Name", {
       id: "Name",
       header: () => "Name",
       cell: ({ row }) => {
-        return <h3>{row.name}</h3>;
+        return <h3>{row.original.user_name}</h3>;
       },
     }),
     columnHelper.accessor("volume", {
       id: "volume",
       header: () => "Volume",
-      cell: (info) => info.getValue(),
+      cell: ({ row }) => {
+        return <h3>{row.original.total_price}</h3>;
+      },
     }),
   ];
   const navigate = useNavigate();

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,11 +33,14 @@ const Login = () => {
         const res = await fetchData("post", "/user/login", payload);
         console.log(res.data);
         localStorage.setItem("user", JSON.stringify(res.user));
-        navigate(-1);
+        navigate("/");
         setToken(res.token);
       } catch (error) {
         console.log(error);
         setToken(null);
+        toast(`${error.response.data}`, {
+          className: "text-red-200",
+        });
       }
     },
   });
@@ -66,42 +70,45 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                {/* <Link
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              mutationSubmit.mutateAsync();
+            }}
+          >
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  required
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  {/* <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
                 </Link> */}
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
-              <Input
-                id="password"
-                type="password"
-                required
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              onClick={() => mutationSubmit.mutate()}
-            >
-              Login
-            </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link to={"/registration"} className="underline">

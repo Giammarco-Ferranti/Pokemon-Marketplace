@@ -27,6 +27,7 @@ export const uploadProduct = async (req, res) => {
       res.status(400).send("User not logged in");
     }
   } catch (error) {
-    return res.status(500).send(error);
+    res.status(500).send(error);
+    console.log(error);
   }
 };

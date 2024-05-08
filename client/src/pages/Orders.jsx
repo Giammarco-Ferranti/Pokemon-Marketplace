@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/select";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
+import { toast } from "sonner";
 
 const columnHelper = createColumnHelper();
 
@@ -154,17 +155,19 @@ const Orders = () => {
     }),
   ];
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
+  const payload = {
+    userId: userId,
+  };
   const getOrders = useQuery({
-    queryKey: ["get-orders"],
+    queryKey: ["get-orders", payload],
     queryFn: () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      const userId = user.id;
-      const payload = {
-        userId: userId,
-      };
+      console.log(payload);
       return fetchData("post", "/order/get-all", payload);
     },
   });
+  console.log(getOrders.data);
 
   const handleUpdate = useMutation({
     mutationFn: async (payload) => {
@@ -175,7 +178,6 @@ const Orders = () => {
   const handleDelete = useMutation({
     mutationFn: async (orderId) => {
       await fetchData("delete", `/order/delete/${orderId}`);
-      getOrders.refetch();
     },
   });
 
@@ -184,7 +186,16 @@ const Orders = () => {
       orderId: orderId,
       value: status,
     };
-    handleUpdate.mutate(payload);
+    console.log(payload.value);
+    if (payload.value !== "") {
+      handleUpdate.mutate(payload);
+    }
+  };
+
+  const handleDelete2 = () => {
+    handleDelete.mutate(orderId);
+    getOrders.refetch();
+    toast("Order deleted");
   };
 
   return (
@@ -207,7 +218,7 @@ const Orders = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                handleDelete.mutate(orderId);
+                handleDelete2();
                 setOpenDialog(false);
               }}
             >
@@ -226,7 +237,7 @@ const Orders = () => {
                 shipped.
                 <Select onValueChange={(e) => setStatus(e)}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Shipped" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Delivered">Delivered</SelectItem>
@@ -260,7 +271,7 @@ const Orders = () => {
                 shipped.
                 <Select onValueChange={(e) => setStatus(e)}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Shipped" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Delivered">Delivered</SelectItem>

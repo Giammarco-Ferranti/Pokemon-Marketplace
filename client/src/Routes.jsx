@@ -1,17 +1,18 @@
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "./utils/Auth/AuthContext.jsx";
 import ProtectedRoute from "./utils/Auth/ProtectedRoute.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-import Login from "./pages/Login.jsx";
-import Registration from "./pages/Registration.jsx";
-import NavbarLayout from "./Layouts/Navbar.jsx";
-import Product from "./pages/Product.jsx";
-import Profile from "./pages/Profile.jsx";
-import Orders from "./pages/Orders.jsx";
-import Listing from "./pages/Listing.jsx";
-import Footer from "./Layouts/Footer.jsx";
-import Explore from "./pages/Explore.jsx";
-import Users from "./pages/Users.jsx";
+import {
+  Dashboard,
+  Explore,
+  Listing,
+  Login,
+  Orders,
+  Product,
+  Profile,
+  Registration,
+  Users,
+} from "./pages/index.js";
+import { NavbarLayout, Footer } from "../src/Layouts/index.js";
 
 const Routes = () => {
   const Root = () => {

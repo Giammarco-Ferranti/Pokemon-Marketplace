@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import pokemonSvg from "../assets/15.svg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.jpg";
-import axios from "axios";
 import { useAuth } from "@/utils/Auth/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
@@ -20,6 +19,7 @@ const NavbarLayout = () => {
       navigate(`explore/all`);
     } else {
       navigate(`/explore/${query}`);
+      setQuery("");
     }
   };
 
@@ -111,17 +111,6 @@ const NavbarLayout = () => {
           ) : (
             <Button onClick={() => navigate("/login")}>Login</Button>
           )}
-          {/* {token ? (
-          <Button
-            onClick={() => {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
-              navigate("/");
-            }}
-          >
-            Logout
-          </Button>
-        ) : null} */}
         </div>
       </div>
     </div>

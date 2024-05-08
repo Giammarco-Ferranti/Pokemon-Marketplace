@@ -23,28 +23,27 @@ const Registration = () => {
   const [password, setPassword] = useState("");
   const { setToken } = useAuth();
 
-  const payload = {
-    username: username,
-    email: email,
-    password: password,
-  };
   const mutationSubmit = useMutation({
     mutationFn: async () => {
       try {
+        const payload = {
+          username: username,
+          email: email,
+          password: password,
+        };
         const res = await fetchData("post", "/user/signup", payload);
         localStorage.setItem("user", JSON.stringify(res.user));
         navigate("/");
         setToken(res.token);
       } catch (error) {
         console.log(error);
+        setToken(null);
         toast(`${error.response.data}`, {
           className: "text-red-200",
         });
       }
     },
   });
-
-  console.log(mutationSubmit);
 
   return (
     <div className="flex justify-center items-center w-full h-screen">
@@ -98,7 +97,7 @@ const Registration = () => {
           </form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
-            <Link href="#" className="underline">
+            <Link to={"/login"} className="underline">
               Sign in
             </Link>
           </div>

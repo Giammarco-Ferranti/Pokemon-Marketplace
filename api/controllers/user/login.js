@@ -1,8 +1,7 @@
 import pool from "../../db/connection.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-const SECRET_KEY = "lhbubwdnjoiwjnj";
+import "dotenv/config";
 
 export const login = async (req, res) => {
   try {
@@ -16,9 +15,13 @@ export const login = async (req, res) => {
     if (user.rows.length > 0) {
       const isSame = await bcrypt.compare(password, user.rows[0].password);
       if (isSame) {
-        const token = jwt.sign({ id: user.rows[0].id }, SECRET_KEY, {
-          expiresIn: 1800, //30 minutes
-        });
+        const token = jwt.sign(
+          { id: user.rows[0].id },
+          process.env.JWT_SECRET_KEY,
+          {
+            expiresIn: 1800, //30 minutes
+          }
+        );
         //send user data
         const response = {
           token: token,
