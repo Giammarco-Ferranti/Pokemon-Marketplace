@@ -11,7 +11,6 @@ const Product = () => {
   const navigate = useNavigate();
   const { token } = useAuth();
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id;
 
   const fetchProduct = useQuery({
     queryKey: ["product", productId],
@@ -27,16 +26,13 @@ const Product = () => {
   const handleOrder = async () => {
     const payload = {
       productId: productId,
-      userId: userId,
+      userId: user.id,
       status: "Shipped",
     };
     mutation.mutate(payload);
   };
 
-  if (!fetchProduct.data)
-    return useEffect(() => {
-      navigate("/");
-    }, []);
+  if (!fetchProduct.data) return null;
 
   return fetchProduct.data.map((item) => {
     return (
@@ -57,7 +53,7 @@ const Product = () => {
 
             <h3>{item.price} €</h3>
             {token ? (
-              fetchProduct.data[0].user_id === userId ? (
+              fetchProduct.data[0].user_id === user.id ? (
                 <Button
                   onClick={() => {
                     toast("You can't buy your own product");
