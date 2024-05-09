@@ -20,7 +20,8 @@ const Explore = () => {
 
   return (
     <div className="flex flex-col h-full w-full justify-start items-center mt-20 p-4">
-      <Grid img={getImages} title={"Top Users"} />
+      <h1>{name === "all" ? "All products" : `Search ${name}`}</h1>
+      <Grid img={getImages} />
     </div>
   );
 };

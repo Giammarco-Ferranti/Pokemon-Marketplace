@@ -25,7 +25,7 @@ const columns = [
     id: "volume",
     header: () => "Volume",
     cell: ({ row }) => {
-      return <h3>{row.original.total_price}</h3>;
+      return <h3>{row.original.total_volume}</h3>;
     },
   }),
 ];

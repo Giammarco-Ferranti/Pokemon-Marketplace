@@ -54,9 +54,11 @@ const Orders = () => {
   const [open, setOpen] = useState(false);
   const { width } = useWindowDimensions();
   const [orderId, setOrderId] = useState();
+  const [productId, setProductId] = useState();
   const [status, setStatus] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
   const columns = [
     columnHelper.accessor("index", {
       id: ({ row }) => {
@@ -127,7 +129,7 @@ const Orders = () => {
       },
     }),
     columnHelper.accessor("delete", {
-      id: "date",
+      id: "delete",
       header: () => "",
       cell: ({ row }) => {
         return row.original.order_status === "Shipped" ? (
@@ -142,6 +144,8 @@ const Orders = () => {
             onClick={() => {
               setOpenDialog(true);
               setOrderId(row.original.order_id);
+              // console.log(row.original.product_id);
+              setProductId(row.original.product_id);
             }}
           >
             <path
@@ -155,19 +159,15 @@ const Orders = () => {
     }),
   ];
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id;
-  const payload = {
-    userId: userId,
-  };
   const getOrders = useQuery({
-    queryKey: ["get-orders", payload],
+    queryKey: ["get-orders", userId],
     queryFn: () => {
-      console.log(payload);
+      const payload = {
+        userId: userId,
+      };
       return fetchData("post", "/order/get-all", payload);
     },
   });
-  console.log(getOrders.data);
 
   const handleUpdate = useMutation({
     mutationFn: async (payload) => {
@@ -177,7 +177,12 @@ const Orders = () => {
   });
   const handleDelete = useMutation({
     mutationFn: async (orderId) => {
-      await fetchData("delete", `/order/delete/${orderId}`);
+      console.log(productId);
+      await fetchData("delete", `/order/delete/${orderId}`, {
+        productId: productId,
+      });
+      getOrders.refetch();
+      toast("Order deleted");
     },
   });
 
@@ -186,17 +191,12 @@ const Orders = () => {
       orderId: orderId,
       value: status,
     };
-    console.log(payload.value);
+
     if (payload.value !== "") {
       handleUpdate.mutate(payload);
     }
   };
-
-  const handleDelete2 = () => {
-    handleDelete.mutate(orderId);
-    getOrders.refetch();
-    toast("Order deleted");
-  };
+  console.log(getOrders.data);
 
   return (
     <div
@@ -218,7 +218,8 @@ const Orders = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                handleDelete2();
+                // console.log(productId);
+                handleDelete.mutate(orderId);
                 setOpenDialog(false);
               }}
             >
@@ -295,10 +296,9 @@ const Orders = () => {
 
       <h1 className="text-3xl font-semibold">Your orders</h1>
 
-      <DataTable
-        columns={columns}
-        data={getOrders.data ? getOrders.data : []}
-      />
+      {getOrders.data ? (
+        <DataTable columns={columns} data={getOrders.data} />
+      ) : null}
     </div>
   );
 };

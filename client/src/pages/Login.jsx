@@ -44,22 +44,7 @@ const Login = () => {
       }
     },
   });
-  // const handleSubmit = async () => {
-  //   try {
-  //     const res = await axios.post("http://localhost:5010/user/login", {
-  //       email,
-  //       password,
-  //     });
-  //     console.log(res.data);
-  //     localStorage.setItem("user", JSON.stringify(res.data.user));
 
-  //     navigate(-1);
-  //     setToken(res.data.token);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setToken(null);
-  //   }
-  // };
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <Card className="mx-auto max-w-sm">

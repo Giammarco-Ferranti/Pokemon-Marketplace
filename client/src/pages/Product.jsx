@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/utils/Auth/AuthContext";
 import { fetchData } from "@/utils/fetchData";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -10,6 +10,8 @@ const Product = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
 
   const fetchProduct = useQuery({
     queryKey: ["product", productId],
@@ -23,8 +25,6 @@ const Product = () => {
   });
 
   const handleOrder = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user.id;
     const payload = {
       productId: productId,
       userId: userId,
@@ -33,7 +33,10 @@ const Product = () => {
     mutation.mutate(payload);
   };
 
-  if (!fetchProduct.data) return null;
+  if (!fetchProduct.data)
+    return useEffect(() => {
+      navigate("/");
+    }, []);
 
   return fetchProduct.data.map((item) => {
     return (
@@ -54,19 +57,29 @@ const Product = () => {
 
             <h3>{item.price} €</h3>
             {token ? (
-              <Button
-                onClick={() => {
-                  handleOrder();
-                  toast("Product Bought!", {
-                    action: {
-                      label: "Orders",
-                      onClick: () => navigate("/profile/orders"),
-                    },
-                  });
-                }}
-              >
-                Buy
-              </Button>
+              fetchProduct.data[0].user_id === userId ? (
+                <Button
+                  onClick={() => {
+                    toast("You can't buy your own product");
+                  }}
+                >
+                  Your product
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    handleOrder();
+                    toast("Product Bought!", {
+                      action: {
+                        label: "Orders",
+                        onClick: () => navigate("/profile/orders"),
+                      },
+                    });
+                  }}
+                >
+                  Buy
+                </Button>
+              )
             ) : (
               <Button onClick={() => navigate("/login")}>Log in to buy</Button>
             )}

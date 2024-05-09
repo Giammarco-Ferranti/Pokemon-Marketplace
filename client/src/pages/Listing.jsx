@@ -67,6 +67,8 @@ const Listing = () => {
   const [newDescription, setNewDescription] = useState();
   const [newPrice, setNewPrice] = useState();
   const [newRarity, setNewRarity] = useState();
+  const localData = JSON.parse(localStorage.getItem("user"));
+  const userId = localData.id;
 
   const columns = [
     columnHelper.accessor("index", {
@@ -187,8 +189,6 @@ const Listing = () => {
     }),
   ];
 
-  const localData = JSON.parse(localStorage.getItem("user"));
-  const userId = localData.id;
   const getData = useQuery({
     queryKey: ["product-by-user", userId],
     queryFn: () => {
