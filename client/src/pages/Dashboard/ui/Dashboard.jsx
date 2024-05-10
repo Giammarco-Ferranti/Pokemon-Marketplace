@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import Grid from "@/Layouts/Grid";
-import DataTable from "@/Layouts/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { fetchData } from "@/utils/fetchData";
-import gif from "../assets/blastoise-mega.gif";
+import gif from "../../../assets/blastoise-mega.gif";
+import { DataTable, Grid } from "@/Layouts";
+import { useDashboardLogic } from "../Logic/useDashboardLogic";
+import * as S from "./Dashboard.classes.js";
 
 const columnHelper = createColumnHelper();
 
 function Dashboard() {
+  const { mostValuable, bestUsers } = useDashboardLogic();
   const columns = [
     columnHelper.accessor("index", {
       id: "index",
@@ -18,18 +18,6 @@ function Dashboard() {
         return <h3>{row.index + 1}</h3>;
       },
     }),
-    // columnHelper.accessor("name", {
-    //   id: "Image",
-    //   header: () => "Image",
-    //   cell: ({ row }) => {
-    //     return (
-    //       <img
-    //         src={`http://localhost:5010/${row.original.img_path}`}
-    //         className="w-10"
-    //       />
-    //     );
-    //   },
-    // }),
     columnHelper.accessor("Name", {
       id: "Name",
       header: () => "Name",
@@ -46,33 +34,20 @@ function Dashboard() {
     }),
   ];
   const navigate = useNavigate();
-  const mostValuable = useQuery({
-    queryKey: ["most-expensive"],
-    queryFn: () => fetchData("get", "/product/products/most-expensive"),
-  });
-
-  const bestUsers = useQuery({
-    queryKey: ["best-users"],
-    queryFn: () => fetchData("get", "/user/best-users"),
-  });
 
   return (
     <>
-      <div className="flex flex-row py-16 w-full h-fit sm:h-screen justify-center items-center rounded-3xl mt-5">
-        <div className="w-full flex flex-col gap-10 items-center justify-center h-fit bg-[#FBF3D5] px-5 py-5 sm:py-20 rounded-2xl sm:flex-row  sm:gap-24 mx-4 xl:mx-0">
-          <div className="bg-white p-10 rounded-xl">
-            <img
-              src={gif}
-              className="w-96 h-96 aspect-square sm:w-60 sm:h-60 md:w-96 md:h-96 "
-              alt="hero-gif"
-            />
+      <div className={S.heroWrapper}>
+        <div className={S.heroContent}>
+          <div className={S.heroImageWrapper}>
+            <img src={gif} className={S.heroImage} alt="hero-gif" />
           </div>
-          <div className="flex flex-col items-center justify-center gap-3  text-center sm:items-start sm:text-left">
-            <h3 className="text-4xl font-bold">Gotta catch 'em all.</h3>
-            <p className="font-semibold text-gray-600">
+          <div className={S.heroTextWrapper}>
+            <h3 className={S.heroTextTitle}>Gotta catch 'em all.</h3>
+            <p className={S.heroTextDescription}>
               Lorem ipsum dolor, sit amet consectetur adipisicing elit.
             </p>
-            <Button className="rounded-3xl">Explore</Button>
+            <Button>Explore</Button>
           </div>
         </div>
       </div>
@@ -81,8 +56,8 @@ function Dashboard() {
       <Button
         onClick={() => navigate("/explore/all")}
         variant="outline"
-        className="rounded-3xl"
-        size="lg"
+        className="rounded-full"
+        size="icon"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

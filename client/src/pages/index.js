@@ -1,4 +1,4 @@
-export { default as Dashboard } from "./Dashboard";
+export { default as Dashboard } from "./Dashboard/ui/Dashboard";
 export { default as Explore } from "./Explore";
 export { default as Listing } from "./Listing";
 export { default as Login } from "./Login";

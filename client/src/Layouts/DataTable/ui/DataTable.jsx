@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import * as S from "./DataTable.classes.js";
 
 const DataTable = ({ data, columns, title }) => {
   const table = useReactTable({
@@ -24,13 +25,16 @@ const DataTable = ({ data, columns, title }) => {
   });
 
   return (
-    <div className="w-full flex flex-col justify-center px-4">
-      <h1 className="font-semibold text-3xl pb-3">{title}</h1>
-      <div className="">
+    <div className={S.dataTableWrapper}>
+      <h1 className={S.dataTableTitle}>{title}</h1>
+      <div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b">
+              <TableRow
+                key={headerGroup.id}
+                className={S.dataTableTableRowHeader}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
@@ -38,7 +42,7 @@ const DataTable = ({ data, columns, title }) => {
                         <div
                           className={
                             header.column.getCanSort()
-                              ? "cursor-pointer select-none flex flex-row "
+                              ? S.dataTableSortHeader
                               : ""
                           }
                           onClick={header.column.getToggleSortingHandler()}
@@ -102,7 +106,7 @@ const DataTable = ({ data, columns, title }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-none"
+                  className={S.dataTableTableRowColumn}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -116,10 +120,7 @@ const DataTable = ({ data, columns, title }) => {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className={S.dataTableCell}>
                   No results.
                 </TableCell>
               </TableRow>

@@ -1,54 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
-import pokemonSvg from "../../assets/15.svg";
+import pokemonSvg from "../../../assets/15.svg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import avatar from "../../assets/avatar.jpg";
+import avatar from "../../../assets/avatar.jpg";
 import { useAuth } from "@/utils/Auth/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { fetchData } from "@/utils/fetchData";
 import * as S from "./Navbar.classes.js";
+import { useNavbarLogic } from "../Logic/useNavbarLogic";
 
 const NavbarLayout = () => {
-  const navigate = useNavigate();
   const { token } = useAuth();
-  const [query, setQuery] = useState();
-  const [scrolling, setScrolling] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setScrolling(true);
-      } else {
-        setScrolling(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (query === undefined || query === "") {
-      navigate(`explore/all`);
-    } else {
-      navigate(`/explore/${query}`);
-      setQuery("");
-    }
-  };
-
-  const getDataByQuery = useQuery({
-    queryKey: ["get-data-by-query", query],
-    queryFn: () => {
-      if (query !== undefined && query !== "") {
-        return fetchData("get", `/product/products/search/?q=${query}`);
-      }
-    },
-    enabled: query !== undefined && query !== "",
-  });
+  const navigate = useNavigate();
+  const { query, setQuery, scrolling, handleSubmit, getDataByQuery } =
+    useNavbarLogic();
 
   return (
     <nav className={scrolling ? `border-b ${S.navbar}` : S.navbar}>
@@ -79,7 +43,9 @@ const NavbarLayout = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </form>
-          {query !== "" && getDataByQuery.data !== undefined ? (
+          {query !== "" &&
+          query !== undefined &&
+          getDataByQuery.data !== undefined ? (
             <div className={S.navbarSearchSuggestionsWrapper}>
               {getDataByQuery.data.length > 0 ? (
                 getDataByQuery.data.map((item) => {

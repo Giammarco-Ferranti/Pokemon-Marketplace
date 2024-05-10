@@ -1,4 +1,3 @@
-import DataTable from "@/Layouts/DataTable";
 import { Button } from "@/components/ui/button";
 import { createColumnHelper } from "@tanstack/react-table";
 import axios from "axios";
@@ -49,6 +48,7 @@ import useWindowDimensions from "@/hooks/useWindowWidth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
 import { toast } from "sonner";
+import { DataTable } from "@/Layouts";
 
 const columnHelper = createColumnHelper();
 

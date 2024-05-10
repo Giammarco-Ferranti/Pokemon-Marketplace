@@ -1,4 +1,4 @@
-import DataTable from "@/Layouts/DataTable";
+import { DataTable } from "@/Layouts";
 import { fetchData } from "@/utils/fetchData";
 import { useQuery } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";

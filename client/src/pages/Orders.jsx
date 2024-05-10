@@ -1,4 +1,3 @@
-import DataTable from "@/Layouts/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -47,6 +46,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetchData";
 import { toast } from "sonner";
+import { DataTable } from "@/Layouts";
 
 const columnHelper = createColumnHelper();
 

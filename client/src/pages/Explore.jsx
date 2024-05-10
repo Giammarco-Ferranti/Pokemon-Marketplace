@@ -1,6 +1,7 @@
-import Grid from "@/Layouts/Grid";
+import { Grid } from "@/Layouts";
 import { fetchData } from "@/utils/fetchData";
 import { useQuery } from "@tanstack/react-query";
+
 import React from "react";
 import { useParams } from "react-router-dom";
 
