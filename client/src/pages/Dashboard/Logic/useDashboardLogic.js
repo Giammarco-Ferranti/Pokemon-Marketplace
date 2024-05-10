@@ -12,6 +12,8 @@ export const useDashboardLogic = () => {
     queryFn: () => fetchData("get", "/user/best-users"),
   });
 
+  console.log(bestUsers.data);
+
   return {
     mostValuable,
     bestUsers,

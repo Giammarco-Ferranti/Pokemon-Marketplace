@@ -19,7 +19,7 @@ export const useListingsLogic = () => {
   const [newRarity, setNewRarity] = useState();
   const localData = JSON.parse(localStorage.getItem("user"));
   const userId = localData.id;
-  console.log(productId);
+  console.log(openUpdate);
 
   const getData = useQuery({
     queryKey: ["product-by-user", userId],
@@ -65,6 +65,7 @@ export const useListingsLogic = () => {
     }
 
     mutationSubmit.mutate(formData);
+    setOpen(false);
     toast("Product added");
   };
 
@@ -80,7 +81,6 @@ export const useListingsLogic = () => {
 
       await fetchData("patch", `/product/update/${productId}`, payload);
       getData.refetch();
-      setOpenUpdate(false);
     },
   });
 

@@ -16,7 +16,7 @@ export const createOrder = async (req, res) => {
     if (postOrder) {
       const updateProductStatus = await pool.query(
         ` UPDATE products
-        SET status = 'sold'
+        SET status = 'Sold'
         WHERE id = $1;`,
         [productId]
       );

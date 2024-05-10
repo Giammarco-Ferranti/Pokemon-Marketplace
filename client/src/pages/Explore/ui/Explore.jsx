@@ -11,7 +11,9 @@ const Explore = () => {
 
   return (
     <div className={S.exploreWrapper}>
-      <h1>{name === "all" ? "All products" : `Search ${name}`}</h1>
+      <h1 className={S.exploreTitle}>
+        {name === "all" ? "All products" : `Search ${name}`}
+      </h1>
       <Grid img={getImages} />
     </div>
   );

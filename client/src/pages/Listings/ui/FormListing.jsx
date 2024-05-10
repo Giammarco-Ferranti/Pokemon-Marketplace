@@ -95,8 +95,8 @@ const FormListing = ({ type, productId }) => {
           onSubmit={(e) => {
             e.preventDefault();
             mutationUpdate.mutate(productId);
-            setOpenUpdate(false);
             toast("Product Updated");
+            setOpenUpdate(false);
           }}
           className={S.form}
         >

@@ -23,7 +23,7 @@ export const signUp = async (req, res) => {
       [data.username, data.email]
     );
     if (userFind.rows.length > 0) {
-      return res.status(400).send("User, already taken");
+      return res.status(400).send("Username already taken");
     } else {
       const user = await pool.query(
         `INSERT INTO users (id, username, email, password)

@@ -43,7 +43,7 @@ const DataTable = ({ data, columns, title }) => {
                           className={
                             header.column.getCanSort()
                               ? S.dataTableSortHeader
-                              : ""
+                              : "font-bold text-gray-400 text-base"
                           }
                           onClick={header.column.getToggleSortingHandler()}
                           title={

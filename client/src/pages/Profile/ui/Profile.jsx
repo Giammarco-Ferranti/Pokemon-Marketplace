@@ -5,26 +5,26 @@ import { useNavigate } from "react-router-dom";
 import * as S from "./Profile.classes.js";
 
 const Profile = () => {
-  const username = useState(localStorage.getItem("user"));
+  const username = useState(JSON.parse(localStorage.getItem("user")));
   const { token, setToken } = useAuth();
   const navigate = useNavigate();
+  console.log(username);
   return (
     <div className={S.profileWrapper}>
-      <div>Hello, user</div>
+      <div className={S.profileTitle}>
+        Hello{username ? `, ${username[0].username}` : null}
+      </div>
       <div className={S.profileListWrapper}>
         <ul className={S.profileList}>
-          <li
-            onClick={() => navigate("/profile/orders")}
-            className={S.prolieListItem}
-          >
+          <Button onClick={() => navigate("/profile/orders")} variant="outline">
             Orders
-          </li>
-          <li
-            className={S.prolieListItem}
+          </Button>
+          <Button
             onClick={() => navigate("/profile/listings")}
+            variant="outline"
           >
             Listings
-          </li>
+          </Button>
         </ul>
 
         {token ? (
@@ -35,6 +35,7 @@ const Profile = () => {
               navigate("/");
             }}
             className="w-fit"
+            variant="destructive"
           >
             Logout
           </Button>

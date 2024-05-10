@@ -7,6 +7,7 @@ import avatar from "../../../assets/avatar.jpg";
 import { useAuth } from "@/utils/Auth/AuthContext";
 import * as S from "./Navbar.classes.js";
 import { useNavbarLogic } from "../Logic/useNavbarLogic";
+import verifiedIcon from "../../../assets/hexagon-check.svg";
 
 const NavbarLayout = () => {
   const { token } = useAuth();
@@ -39,7 +40,7 @@ const NavbarLayout = () => {
             <Input
               type={"text"}
               placeholder="Search Cards"
-              className=""
+              className={S.navbarSearch}
               onChange={(e) => setQuery(e.target.value)}
             />
           </form>
@@ -58,6 +59,7 @@ const NavbarLayout = () => {
                         className={S.navbarSearchSuggestionsLogoHolder}
                         onClick={() => {
                           navigate(`/product/${item.id}`);
+                          setQuery("");
                         }}
                       >
                         <img
@@ -65,12 +67,17 @@ const NavbarLayout = () => {
                           src={`http://localhost:5010/${item.img_path}`}
                           className={S.navbarLogo}
                         />
-                        <h3 className={S.navbarSearchSuggestionsText}>
-                          {item.name}
+                        <h3 className={S.navbarSearchSuggestionsTitle}>
+                          {item.name}{" "}
+                          <img
+                            src={verifiedIcon}
+                            alt="verified"
+                            className="w-4"
+                          />
                         </h3>
                       </div>
-                      <h3 className={S.navbarSearchSuggestionsText}>
-                        {item.price}
+                      <h3 className={S.navbarSearchSuggestionsPrice}>
+                        {item.price} €
                       </h3>
                     </div>
                   );

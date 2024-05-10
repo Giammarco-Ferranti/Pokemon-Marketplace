@@ -5,6 +5,7 @@ import gif from "../../../assets/blastoise-mega.gif";
 import { DataTable, Grid } from "@/Layouts";
 import { useDashboardLogic } from "../Logic/useDashboardLogic";
 import * as S from "./Dashboard.classes.js";
+import verifiedIcon from "../../../assets/hexagon-check.svg";
 
 const columnHelper = createColumnHelper();
 
@@ -13,23 +14,51 @@ function Dashboard() {
   const columns = [
     columnHelper.accessor("index", {
       id: "index",
+      enableSorting: false,
       header: () => "#",
       cell: ({ row }) => {
-        return <h3>{row.index + 1}</h3>;
+        return <h3 className="text-gray-500">{row.index + 1}</h3>;
       },
     }),
     columnHelper.accessor("Name", {
       id: "Name",
+      enableSorting: false,
       header: () => "Name",
       cell: ({ row }) => {
-        return <h3>{row.original.user_name}</h3>;
+        return (
+          <h3 className="flex flex-row gap-2">
+            {row.original.user_name}{" "}
+            <img src={verifiedIcon} className="w-4 " alt="verified" />
+          </h3>
+        );
       },
     }),
     columnHelper.accessor("volume", {
       id: "volume",
+      enableSorting: true,
       header: () => "Volume",
       cell: ({ row }) => {
-        return <h3>{row.original.total_volume}</h3>;
+        return <h3>{row.original.total_volume} €</h3>;
+      },
+    }),
+    columnHelper.accessor("change", {
+      id: "change",
+      enableSorting: false,
+      header: () => "Change",
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center justify-start">
+            {Math.random() < 0.5 ? (
+              <p className={S.priceChangeRed}>
+                {Math.floor(Math.random() * 100) / 100}
+              </p>
+            ) : (
+              <p className={S.priceChangeGreen}>
+                {Math.floor(Math.random() * 100) / 100}
+              </p>
+            )}
+          </div>
+        );
       },
     }),
   ];
@@ -43,37 +72,22 @@ function Dashboard() {
             <img src={gif} className={S.heroImage} alt="hero-gif" />
           </div>
           <div className={S.heroTextWrapper}>
-            <h3 className={S.heroTextTitle}>Gotta catch 'em all.</h3>
+            <h5 className={S.heroCallToaction}>
+              Check the best{" "}
+              <span className={S.heroCallToactionSpan}>collections</span>
+            </h5>
+            <h3 className={S.heroTextTitle}>Gotta catch 'em all. 👾 </h3>
             <p className={S.heroTextDescription}>
               Lorem ipsum dolor, sit amet consectetur adipisicing elit.
             </p>
-            <Button>Explore</Button>
+            <Button variant="default" onClick={() => navigate("/explore/all")}>
+              Explore
+            </Button>
           </div>
         </div>
       </div>
 
-      <Grid img={mostValuable} title={"Best"} />
-      <Button
-        onClick={() => navigate("/explore/all")}
-        variant="outline"
-        className="rounded-full"
-        size="icon"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6 text-gray-500"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-          />
-        </svg>
-      </Button>
+      <Grid img={mostValuable} title={"Rarest"} button={true} />
 
       <DataTable
         columns={columns}

@@ -18,6 +18,7 @@ import { DataTable } from "@/Layouts";
 import { useListingsLogic } from "../Logic/useListingsLogic";
 import * as S from "./Listings.classes.js";
 import FormListing from "./FormListing";
+import plusSvg from "../../../assets/plus-svgrepo-com.svg";
 
 const columnHelper = createColumnHelper();
 
@@ -69,7 +70,11 @@ const Listing = () => {
       id: "description",
       enableSorting: false,
       header: () => "Description",
-      cell: (info) => info.getValue(),
+      cell: ({ row }) => {
+        return (
+          <p className="truncate w-40 md:w-full">{row.original.description}</p>
+        );
+      },
     }),
     columnHelper.accessor("price", {
       id: "price",
@@ -81,7 +86,19 @@ const Listing = () => {
       id: "status",
       enableSorting: false,
       header: () => "Status",
-      cell: (info) => info.getValue(),
+      cell: ({ row }) => {
+        return (
+          <p
+            className={
+              row.original.status === "Available"
+                ? S.statusAvailable
+                : S.statusSold
+            }
+          >
+            {row.original.status}
+          </p>
+        );
+      },
     }),
     columnHelper.accessor("created_at", {
       id: "created_at",
@@ -180,9 +197,7 @@ const Listing = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <h1 className={S.listingsTitle}>Your Listings</h1>
 
-      <Button onClick={() => setOpen(true)}>Add new</Button>
       {width < 990 ? (
         <Drawer open={open} onOpenChange={setOpen}>
           <DrawerContent className={S.drawerContentWrapper}>
@@ -210,6 +225,14 @@ const Listing = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      <div className={S.titleWrapper}>
+        <h1 className={S.listingsTitle}>Your Listings</h1>
+
+        <Button onClick={() => setOpen(true)} size="icon">
+          <img src={plusSvg} alt="plus-icon" className="w-5" />
+        </Button>
+      </div>
       <DataTable columns={columns} data={getData.data ? getData.data : []} />
     </div>
   );

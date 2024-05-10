@@ -27,7 +27,6 @@ const Footer = () => {
             <li>Profile</li>
             <li>Orders</li>
             <li>Payments</li>
-            <li>Transaction</li>
           </ul>
         </div>
       </div>

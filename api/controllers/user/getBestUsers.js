@@ -6,7 +6,7 @@ export const getBestUsers = async (req, res) => {
       `SELECT u.id AS user_id, u.username AS user_name ,SUM(p.price) AS total_volume 
       FROM users u
       JOIN products p ON u.id = p.owner 
-      WHERE p.status = 'sold'
+      WHERE p.status = 'Sold'
       GROUP BY u.id
       ORDER BY total_volume DESC 
       LIMIT 100`

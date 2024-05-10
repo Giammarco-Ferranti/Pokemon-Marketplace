@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select";
 import { DataTable } from "@/Layouts";
 import { useOrdersLogic } from "../Logic/useOrdersLogic";
+import { toast } from "sonner";
 
 const columnHelper = createColumnHelper();
 
@@ -65,7 +66,11 @@ const Orders = () => {
       },
       header: () => "#",
       cell: ({ row }) => {
-        return <h3 key={row.order_id}>{row.index + 1}</h3>;
+        return (
+          <h3 className="text-gray-500" key={row.order_id}>
+            {row.index + 1}
+          </h3>
+        );
       },
     }),
     columnHelper.accessor("product_image", {
@@ -102,7 +107,15 @@ const Orders = () => {
             key={row.order_id}
             className="flex flex-row gap-3 items-center justify-start"
           >
-            <h1>{row.original.order_status}</h1>
+            <h1
+              className={
+                row.original.order_status === "Shipped"
+                  ? S.statusShipped
+                  : S.statusDelivered
+              }
+            >
+              {row.original.order_status}
+            </h1>
             {row.original.order_status === "Shipped" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -177,6 +190,7 @@ const Orders = () => {
               onClick={() => {
                 handleDelete.mutate(orderId);
                 setOpenDialog(false);
+                toast("Order deleted");
               }}
             >
               Continue
