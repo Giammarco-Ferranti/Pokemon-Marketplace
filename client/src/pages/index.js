@@ -1,9 +1,9 @@
 export { default as Dashboard } from "./Dashboard/ui/Dashboard";
-export { default as Explore } from "./Explore";
-export { default as Listing } from "./Listing";
-export { default as Login } from "./Login";
-export { default as Orders } from "./Orders";
-export { default as Product } from "./Product";
-export { default as Profile } from "./Profile";
-export { default as Registration } from "./Registration";
-export { default as Users } from "./Users";
+export { default as Explore } from "./Explore/ui/Explore";
+export { default as Listing } from "./Listings/ui/Listing";
+export { default as Login } from "./Login/ui/Login";
+export { default as Orders } from "./Orders/ui/Orders";
+export { default as Product } from "./Product/ui/Product";
+export { default as Profile } from "./Profile/ui/Profile";
+export { default as Registration } from "./Registration/ui/Registration";
+export { default as Users } from "./Users/ui/Users";

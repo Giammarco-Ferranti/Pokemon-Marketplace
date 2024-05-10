@@ -1,8 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from "react";
+import * as S from "./Orders.classes.js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,16 +10,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -33,7 +28,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import useWindowDimensions from "@/hooks/useWindowWidth";
 import {
@@ -43,22 +37,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchData } from "@/utils/fetchData";
-import { toast } from "sonner";
 import { DataTable } from "@/Layouts";
+import { useOrdersLogic } from "../Logic/useOrdersLogic";
 
 const columnHelper = createColumnHelper();
 
 const Orders = () => {
-  const [open, setOpen] = useState(false);
+  const {
+    open,
+    setOpen,
+    orderId,
+    setOrderId,
+    setProductId,
+    status,
+    setStatus,
+    openDialog,
+    setOpenDialog,
+    getOrders,
+    handleDelete,
+    updateOrders,
+  } = useOrdersLogic();
   const { width } = useWindowDimensions();
-  const [orderId, setOrderId] = useState();
-  const [productId, setProductId] = useState();
-  const [status, setStatus] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id;
   const columns = [
     columnHelper.accessor("index", {
       id: ({ row }) => {
@@ -159,50 +158,8 @@ const Orders = () => {
     }),
   ];
 
-  const getOrders = useQuery({
-    queryKey: ["get-orders", userId],
-    queryFn: () => {
-      const payload = {
-        userId: userId,
-      };
-      return fetchData("post", "/order/get-all", payload);
-    },
-  });
-
-  const handleUpdate = useMutation({
-    mutationFn: async (payload) => {
-      await fetchData("post", "/order/update-status", payload);
-      getOrders.refetch();
-    },
-  });
-  const handleDelete = useMutation({
-    mutationFn: async (orderId) => {
-      console.log(productId);
-      await fetchData("delete", `/order/delete/${orderId}`, {
-        productId: productId,
-      });
-      getOrders.refetch();
-      toast("Order deleted");
-    },
-  });
-
-  const updateOrders = (orderId, status) => {
-    const payload = {
-      orderId: orderId,
-      value: status,
-    };
-
-    if (payload.value !== "") {
-      handleUpdate.mutate(payload);
-    }
-  };
-  console.log(getOrders.data);
-
   return (
-    <div
-      className="flex flex-col w-full p-4 h-screen justify-start
-     items-center mt-20"
-    >
+    <div className={S.ordersWrapper}>
       <AlertDialog open={openDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -218,7 +175,6 @@ const Orders = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                // console.log(productId);
                 handleDelete.mutate(orderId);
                 setOpenDialog(false);
               }}
@@ -230,14 +186,14 @@ const Orders = () => {
       </AlertDialog>
       {width < 990 ? (
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerContent className="h-[90%]">
-            <DrawerHeader className="text-left">
+          <DrawerContent className={S.drawerContent}>
+            <DrawerHeader className={S.drawerHeader}>
               <DrawerTitle>Change order status</DrawerTitle>
-              <DrawerDescription className="flex flex-col w-full justify-center items-center gap-3">
+              <DrawerDescription className={S.drawerDescription}>
                 Change the order status to delivered if the current status is
                 shipped.
                 <Select onValueChange={(e) => setStatus(e)}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className={S.selectTrigger}>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -247,7 +203,7 @@ const Orders = () => {
                 </Select>
               </DrawerDescription>
             </DrawerHeader>
-            <DrawerFooter className="pt-2">
+            <DrawerFooter className={S.drawerFooter}>
               <DrawerClose asChild>
                 <Button
                   onClick={() => {
@@ -264,14 +220,14 @@ const Orders = () => {
         </Drawer>
       ) : (
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className={S.dialogContent}>
             <DialogHeader>
               <DialogTitle>Change order status</DialogTitle>
               <DialogDescription>
                 Change the order status to delivered if the current status is
                 shipped.
                 <Select onValueChange={(e) => setStatus(e)}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className={S.selectTrigger}>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -294,7 +250,7 @@ const Orders = () => {
         </Dialog>
       )}
 
-      <h1 className="text-3xl font-semibold">Your orders</h1>
+      <h1 className={S.orderTitle}>Your orders</h1>
 
       {getOrders.data ? (
         <DataTable columns={columns} data={getOrders.data} />

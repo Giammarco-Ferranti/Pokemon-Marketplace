@@ -35,6 +35,7 @@ export const updateProduct = async (req, res) => {
       }
     } catch (error) {
       res.status(500).send(error);
+      console.log(error);
     }
   }
 };

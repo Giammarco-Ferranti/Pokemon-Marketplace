@@ -1,7 +1,5 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useAuth } from "../utils/Auth/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,57 +10,31 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useMutation } from "@tanstack/react-query";
-import { fetchData } from "@/utils/fetchData";
-import { toast } from "sonner";
+import { useRegistrationLogic } from "../Logic/useRegistrationLogic";
+import * as S from "./Registration.classes.js";
 
 const Registration = () => {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { setToken } = useAuth();
-
-  const mutationSubmit = useMutation({
-    mutationFn: async () => {
-      try {
-        const payload = {
-          username: username,
-          email: email,
-          password: password,
-        };
-        const res = await fetchData("post", "/user/signup", payload);
-        localStorage.setItem("user", JSON.stringify(res.user));
-        navigate("/");
-        setToken(res.token);
-      } catch (error) {
-        console.log(error);
-        setToken(null);
-        toast(`${error.response.data}`, {
-          className: "text-red-200",
-        });
-      }
-    },
-  });
+  const { setEmail, setPassword, setUsername, mutationSubmit } =
+    useRegistrationLogic();
 
   return (
-    <div className="flex justify-center items-center w-full h-screen">
-      <Card className="mx-auto max-w-sm">
+    <div className={S.registrationWrapper}>
+      <Card className={S.card}>
         <CardHeader>
-          <CardTitle className="text-xl">Sign Up</CardTitle>
+          <CardTitle className={S.cardTitle}>Sign Up</CardTitle>
           <CardDescription>
             Enter your information to create an account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form
-            className="grid gap-4"
+            className={S.form}
             onSubmit={(e) => {
               e.preventDefault();
               mutationSubmit.mutateAsync();
             }}
           >
-            <div className="grid gap-2">
+            <div className={S.form}>
               <Label htmlFor="username">Username</Label>
               <Input
                 id="username"
@@ -72,7 +44,7 @@ const Registration = () => {
               />
             </div>
 
-            <div className="grid gap-2">
+            <div className={S.form}>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -82,7 +54,7 @@ const Registration = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="grid gap-2">
+            <div className={S.form}>
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -95,7 +67,7 @@ const Registration = () => {
               Create an account
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
+          <div className={S.cardFooter}>
             Already have an account?{" "}
             <Link to={"/login"} className="underline">
               Sign in

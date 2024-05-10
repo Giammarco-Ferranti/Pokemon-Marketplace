@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../utils/Auth/AuthContext";
+import { useAuth } from "../../../utils/Auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,44 +12,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useMutation } from "@tanstack/react-query";
-import { fetchData } from "@/utils/fetchData";
-import { toast } from "sonner";
+import { useLoginLogic } from "../Logic/useLogicLogic";
+import * as S from "./Login.classes.js";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const { setToken } = useAuth();
-
-  const mutationSubmit = useMutation({
-    mutationFn: async () => {
-      try {
-        const payload = {
-          email: email,
-          password: password,
-        };
-        const res = await fetchData("post", "/user/login", payload);
-        console.log(res.data);
-        localStorage.setItem("user", JSON.stringify(res.user));
-        navigate("/");
-        setToken(res.token);
-      } catch (error) {
-        console.log(error);
-        setToken(null);
-        toast(`${error.response.data}`, {
-          className: "text-red-200",
-        });
-      }
-    },
-  });
+  const { setEmail, setPassword, mutationSubmit } = useLoginLogic();
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <Card className="mx-auto max-w-sm">
+    <div className={S.loginWrapper}>
+      <Card className={S.loginCard}>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className={S.loginCardTitle}>Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
@@ -61,8 +34,8 @@ const Login = () => {
               mutationSubmit.mutateAsync();
             }}
           >
-            <div className="grid gap-4">
-              <div className="grid gap-2">
+            <div className={S.formWrapper}>
+              <div className={S.formWrapper}>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   required
@@ -72,16 +45,8 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  {/* <Link
-                  href="#"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link> */}
-                </div>
+              <div className={S.formWrapper}>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -94,7 +59,7 @@ const Login = () => {
               </Button>
             </div>
           </form>
-          <div className="mt-4 text-center text-sm">
+          <div className={S.cardFooter}>
             Don&apos;t have an account?{" "}
             <Link to={"/registration"} className="underline">
               Sign up

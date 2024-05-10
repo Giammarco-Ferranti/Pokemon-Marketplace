@@ -1,8 +1,8 @@
 import { DataTable } from "@/Layouts";
-import { fetchData } from "@/utils/fetchData";
-import { useQuery } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import React from "react";
+import { useUsersLogic } from "../Logic/useUsersLogic";
+import * as S from "./Users.classes.js";
 
 const columnHelper = createColumnHelper();
 
@@ -31,14 +31,11 @@ const columns = [
 ];
 
 const Users = () => {
-  const getUsers = useQuery({
-    queryKey: ["users"],
-    queryFn: () => fetchData("get", `/user/best-users`),
-  });
+  const { getUsers } = useUsersLogic();
 
   return (
-    <div className="flex flex-col h-screen w-full justify-start items-center mt-20 p-4">
-      <h1 className="text-3xl self-start">Top users</h1>
+    <div className={S.usersWrapper}>
+      <h1 className={S.usersTitle}>Top users</h1>
       {getUsers.data ? (
         <DataTable columns={columns} data={getUsers.data} />
       ) : null}
