@@ -80,7 +80,9 @@ const Orders = () => {
         return (
           <img
             key={row.order_id}
-            src={`http://localhost:5010/${row.original.product_image}`}
+            src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}${
+              row.original.product_image
+            }`}
             className="w-10"
           />
         );

@@ -18,6 +18,7 @@ export const useListingsLogic = () => {
   const [img, setImg] = useState();
   const [name, setName] = useState();
   const [description, setDescription] = useState();
+  const [imgPath, setImgPath] = useState();
   const [price, setPrice] = useState();
   const [rarity, setRarity] = useState();
   const [openUpdate, setOpenUpdate] = useState();
@@ -35,6 +36,17 @@ export const useListingsLogic = () => {
       return fetchData("get", `/product/products/${userId}`);
     },
   });
+
+  const deleteListing = async () => {
+    console.log(imgPath);
+    const { data, error } = await supabase.storage
+      .from("Pokemon")
+      .remove(imgPath);
+    console.log(data);
+    if (data) {
+      handleDelete.mutate();
+    }
+  };
 
   const handleDelete = useMutation({
     mutationFn: async () => {
@@ -123,5 +135,7 @@ export const useListingsLogic = () => {
     handleSubmit,
     mutationUpdate,
     productId,
+    setImgPath,
+    deleteListing,
   };
 };

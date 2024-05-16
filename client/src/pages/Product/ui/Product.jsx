@@ -22,7 +22,7 @@ const Product = () => {
         <div className={S.productDetailsWrapper}>
           <img
             alt="product-image"
-            src={`http://localhost:5010/${item.img_path}`}
+            src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}${item.img_path}`}
             className={S.productImage}
           />
           <div className={S.productDetails}>

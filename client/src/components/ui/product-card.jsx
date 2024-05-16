@@ -16,7 +16,7 @@ const ProductCard = ({ element }) => {
     >
       <CardContent className="p-2">
         <img
-          src={`http://localhost:5010/${element.img_path}`}
+          src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}${element.img_path}`}
           className="rounded-md"
         />
       </CardContent>

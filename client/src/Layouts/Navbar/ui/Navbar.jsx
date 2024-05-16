@@ -63,8 +63,10 @@ const NavbarLayout = () => {
                         }}
                       >
                         <img
+                          src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}${
+                            item.img_path
+                          }`}
                           alt="product-image"
-                          src={`http://localhost:5010/${item.img_path}`}
                           className={S.navbarLogo}
                         />
                         <h3 className={S.navbarSearchSuggestionsTitle}>

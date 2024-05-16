@@ -24,8 +24,6 @@ const columnHelper = createColumnHelper();
 
 const Listing = () => {
   const { width } = useWindowDimensions();
-  const SUPABASE_BUCKET_URL =
-    "https://lcifhlixvidmtkylidkx.supabase.co/storage/v1/object/public/";
   const {
     productId,
     openDialog,
@@ -37,6 +35,8 @@ const Listing = () => {
     setOpenDialog,
     setProductId,
     handleDelete,
+    setImgPath,
+    deleteListing,
   } = useListingsLogic();
   const columns = [
     columnHelper.accessor("index", {
@@ -52,11 +52,11 @@ const Listing = () => {
       enableSorting: false,
       header: () => "Image",
       cell: ({ row }) => {
-        console.log(row.original.img_path);
         return (
           <img
-            src={`${SUPABASE_BUCKET_URL}${row.original.img_path}`}
-            // src="https://lcifhlixvidmtkylidkx.supabase.co/storage/v1/object/public/Pokemon/Images/Rapidash.webp"
+            src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}${
+              row.original.img_path
+            }`}
             className="w-10"
           />
         );
@@ -123,7 +123,7 @@ const Listing = () => {
       enableSorting: false,
       header: () => "",
       cell: ({ row }) => {
-        return row.original.status !== "sold" ? (
+        return row.original.status !== "Sold" ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -150,7 +150,7 @@ const Listing = () => {
       enableSorting: false,
       header: () => "",
       cell: ({ row }) => {
-        return row.original.status !== "sold" ? (
+        return row.original.status !== "Sold" ? (
           <svg
             key={row.order_id}
             xmlns="http://www.w3.org/2000/svg"
@@ -162,6 +162,7 @@ const Listing = () => {
             onClick={() => {
               setOpenDialog(true);
               setProductId(row.original.id);
+              setImgPath(row.original.img_path);
             }}
           >
             <path
@@ -192,7 +193,7 @@ const Listing = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                handleDelete.mutate();
+                deleteListing();
                 setOpenDialog(false);
               }}
             >
