@@ -27,7 +27,12 @@ app.use("/product", productRoute);
 app.use("/order", ordersRoute);
 app.use("/user", userRoute);
 
+//basic route
+app.get("/", (req, res) => {
+  res.send("Hello, use /product, /order, /user routes");
+});
+
 //server
-app.listen(5010, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server started");
 });
