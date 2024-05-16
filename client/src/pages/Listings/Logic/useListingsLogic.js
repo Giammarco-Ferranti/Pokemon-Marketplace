@@ -3,6 +3,14 @@ import { uploadImage } from "@/utils/supabase/connection";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { createClient } from "@supabase/supabase-js";
+
+// Ottieni questi valori dalla tua dashboard di Supabase
+const supabaseUrl = "https://lcifhlixvidmtkylidkx.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjaWZobGl4dmlkbXRreWxpZGt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU4NjY4NTQsImV4cCI6MjAzMTQ0Mjg1NH0.p-5nQtZWvy_zJtULbF-8WQyl2wOWzSFayr1gimRGni4"; // Usa la chiave anonima per operazioni dal lato client
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const useListingsLogic = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -38,7 +46,6 @@ export const useListingsLogic = () => {
 
   const mutationSubmit = useMutation({
     mutationFn: async (payload) => {
-      await uploadImage(img);
       await fetchData("post", "/product/products/upload/", payload);
       getData.refetch();
       setOpen(false);
@@ -50,25 +57,33 @@ export const useListingsLogic = () => {
     const localData = JSON.parse(localStorage.getItem("user"));
     const userId = localData.id;
     // const formData = new FormData();
-    const payload = {
-      id: userId,
-      name: name,
-      price: price,
-      description: description,
-      rarity: rarity,
-      status: "Available",
-    };
-    console.log(img);
+    const { data, error } = await supabase.storage
+      .from("Pokemon")
+      .upload(`Images/${img.name}`, img);
+    console.log(data);
+    if (data) {
+      const payload = {
+        path: data.fullPath,
+        id: userId,
+        name: name,
+        price: price,
+        description: description,
+        rarity: rarity,
+        status: "Available",
+      };
+      console.log(payload);
+      mutationSubmit.mutate(payload);
+      setOpen(false);
+      toast("Product added");
+    } else {
+      console.log(error);
+    }
 
     // formData.append("image", img);
 
     // for (const [key, value] of Object.entries(payload)) {
     //   formData.append(key, value);
     // }
-    console.log(payload);
-    mutationSubmit.mutate(payload);
-    setOpen(false);
-    toast("Product added");
   };
 
   const mutationUpdate = useMutation({

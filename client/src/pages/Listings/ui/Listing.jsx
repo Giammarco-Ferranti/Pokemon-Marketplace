@@ -24,6 +24,8 @@ const columnHelper = createColumnHelper();
 
 const Listing = () => {
   const { width } = useWindowDimensions();
+  const SUPABASE_BUCKET_URL =
+    "https://lcifhlixvidmtkylidkx.supabase.co/storage/v1/object/public/";
   const {
     productId,
     openDialog,
@@ -50,9 +52,11 @@ const Listing = () => {
       enableSorting: false,
       header: () => "Image",
       cell: ({ row }) => {
+        console.log(row.original.img_path);
         return (
           <img
-            src={`http://localhost:5010/${row.original.img_path}`}
+            src={`${SUPABASE_BUCKET_URL}${row.original.img_path}`}
+            // src="https://lcifhlixvidmtkylidkx.supabase.co/storage/v1/object/public/Pokemon/Images/Rapidash.webp"
             className="w-10"
           />
         );
