@@ -33,6 +33,12 @@ The project has the following features:
 - Get the most selling users
 - Get the most expensive products
 
+## Link
+
+https://pokemon-marketplace-ami6.vercel.app/
+
+Check next steps down below.
+
 ## Run Locally
 
 All you need to do to use this project is to install it locally with the following steps. After the installation you will just need to change the .env file in client and api folders. The project is using postgres as a db but the tables will be created automatically when you signup, upload and buy a product.
