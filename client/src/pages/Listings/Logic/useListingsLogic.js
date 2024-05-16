@@ -1,4 +1,5 @@
 import { fetchData } from "@/utils/fetchData";
+import { uploadImage } from "@/utils/supabase/connection";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -19,7 +20,6 @@ export const useListingsLogic = () => {
   const [newRarity, setNewRarity] = useState();
   const localData = JSON.parse(localStorage.getItem("user"));
   const userId = localData.id;
-  console.log(openUpdate);
 
   const getData = useQuery({
     queryKey: ["product-by-user", userId],
@@ -38,6 +38,7 @@ export const useListingsLogic = () => {
 
   const mutationSubmit = useMutation({
     mutationFn: async (payload) => {
+      await uploadImage(img);
       await fetchData("post", "/product/products/upload/", payload);
       getData.refetch();
       setOpen(false);
@@ -48,7 +49,7 @@ export const useListingsLogic = () => {
     e.preventDefault();
     const localData = JSON.parse(localStorage.getItem("user"));
     const userId = localData.id;
-    const formData = new FormData();
+    // const formData = new FormData();
     const payload = {
       id: userId,
       name: name,
@@ -57,14 +58,15 @@ export const useListingsLogic = () => {
       rarity: rarity,
       status: "Available",
     };
+    console.log(img);
 
-    formData.append("image", img);
+    // formData.append("image", img);
 
-    for (const [key, value] of Object.entries(payload)) {
-      formData.append(key, value);
-    }
-
-    mutationSubmit.mutate(formData);
+    // for (const [key, value] of Object.entries(payload)) {
+    //   formData.append(key, value);
+    // }
+    console.log(payload);
+    mutationSubmit.mutate(payload);
     setOpen(false);
     toast("Product added");
   };

@@ -17,12 +17,7 @@ const router = express.Router();
 router.patch("/update/:productId", updateProduct);
 router.get("/all", getAllProducts);
 router.get("/products/most-expensive", getMostPricy);
-router.post(
-  "/products/upload",
-  initializeProductsDb,
-  upload.single("image"),
-  uploadProduct
-);
+router.post("/products/upload", uploadProduct);
 router.get("/products/search", searchProduct);
 router.delete("/delete/:productId", deleteProduct);
 router.get("/products/:userId", getProductsByUser);

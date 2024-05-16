@@ -18,9 +18,9 @@ app.use(bodyParser.json());
 app.use(express.static("images"));
 app.use(morgan("dev"));
 app.use(cookieParser());
-app.use(initializeOrdersDb);
-app.use(initializeUserDb);
-app.use(initializeProductsDb);
+// app.use(initializeOrdersDb);
+// app.use(initializeUserDb);
+// app.use(initializeProductsDb);
 
 //endpoints image
 app.use("/product", productRoute);

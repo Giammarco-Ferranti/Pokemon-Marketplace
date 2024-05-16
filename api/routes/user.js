@@ -4,7 +4,7 @@ import { initializeUserDb } from "../middlewares/Db-Initialize/UserInit.js";
 const router = express.Router();
 
 router.get("/best-users", getBestUsers);
-router.post("/signup", initializeUserDb, signUp);
+router.post("/signup", signUp);
 router.post("/login", login);
 
 export default router;

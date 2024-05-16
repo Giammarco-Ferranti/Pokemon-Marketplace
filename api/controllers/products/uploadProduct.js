@@ -2,9 +2,10 @@ import pool from "../../db/connection.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const uploadProduct = async (req, res) => {
-  const { filename } = req.file;
+  // const { filename } = req.file;
+  // console.log(req);
   const { id, name, price, description, rarity, status } = req.body;
-  console.log(req.body, filename);
+  console.log(req.body);
   try {
     const userExist = await pool.query(
       "SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)",
