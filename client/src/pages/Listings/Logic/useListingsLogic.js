@@ -1,16 +1,9 @@
 import { fetchData } from "@/utils/fetchData";
-import { uploadImage } from "@/utils/supabase/connection";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { createClient } from "@supabase/supabase-js";
-
-// Ottieni questi valori dalla tua dashboard di Supabase
-const supabaseUrl = "https://lcifhlixvidmtkylidkx.supabase.co";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjaWZobGl4dmlkbXRreWxpZGt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU4NjY4NTQsImV4cCI6MjAzMTQ0Mjg1NH0.p-5nQtZWvy_zJtULbF-8WQyl2wOWzSFayr1gimRGni4"; // Usa la chiave anonima per operazioni dal lato client
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+import removePrefix from "@/utils/removePrefix";
+import { uploadImage, deleteImage } from "../../../utils/supabase/actions.js";
 
 export const useListingsLogic = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -38,11 +31,8 @@ export const useListingsLogic = () => {
   });
 
   const deleteListing = async () => {
-    console.log(imgPath);
-    const { data, error } = await supabase.storage
-      .from("Pokemon")
-      .remove(imgPath);
-    console.log(data);
+    const changePrefix = removePrefix(imgPath, "Pokemon/");
+    const data = await deleteImage(changePrefix);
     if (data) {
       handleDelete.mutate();
     }
@@ -68,10 +58,7 @@ export const useListingsLogic = () => {
     e.preventDefault();
     const localData = JSON.parse(localStorage.getItem("user"));
     const userId = localData.id;
-    // const formData = new FormData();
-    const { data, error } = await supabase.storage
-      .from("Pokemon")
-      .upload(`Images/${img.name}`, img);
+    const data = await uploadImage(img);
     console.log(data);
     if (data) {
       const payload = {
@@ -88,14 +75,8 @@ export const useListingsLogic = () => {
       setOpen(false);
       toast("Product added");
     } else {
-      console.log(error);
+      toast("This product already exist");
     }
-
-    // formData.append("image", img);
-
-    // for (const [key, value] of Object.entries(payload)) {
-    //   formData.append(key, value);
-    // }
   };
 
   const mutationUpdate = useMutation({

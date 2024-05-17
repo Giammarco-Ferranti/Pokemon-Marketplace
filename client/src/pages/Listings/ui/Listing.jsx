@@ -34,7 +34,6 @@ const Listing = () => {
     getData,
     setOpenDialog,
     setProductId,
-    handleDelete,
     setImgPath,
     deleteListing,
   } = useListingsLogic();

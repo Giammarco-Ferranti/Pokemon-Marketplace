@@ -54,7 +54,7 @@ const FormListing = ({ type, productId }) => {
             id="name"
             type="text"
             name="name"
-            placeholder="Pikatchu"
+            placeholder="Pikachu"
             onChange={(e) => setName(e.target.value)}
           />
           <Label htmlFor="description">Description</Label>
