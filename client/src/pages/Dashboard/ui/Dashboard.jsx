@@ -78,7 +78,7 @@ function Dashboard() {
             </h5>
             <h3 className={S.heroTextTitle}>Gotta catch 'em all. 👾 </h3>
             <p className={S.heroTextDescription}>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              The best cards in the world are avaible here.
             </p>
             <Button variant="default" onClick={() => navigate("/explore/all")}>
               Explore
