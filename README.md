@@ -8,11 +8,11 @@ The idea was to build something that I've never did and with multiple types of e
 
 ## Experience
 
-The main problem I had with this project was how to handle images without the usage of a bucket like S3. The solution was Multer, with that you can install this product and upload and get images just with an image folder. I've implemented it as a middelware.
+The main problem I had with this project was how to handle images. The solution was Multer for local, with that you can install this product and upload and get images just with an image folder. I've implemented it as a middelware. For production insted I've used supabase storage, a bucket to handle static files.
 
 ## Tech Stack
 
-**Client:** React, TailwindCSS, React Query, ShadcnUi, React Router, Axios, Vite
+**Client:** React, TailwindCSS, React Query, ShadcnUi, React Router, Axios, Vite, Supabase Storage
 
 **Server:** Node, Express, Postgres, Multer, JWT
 
@@ -41,7 +41,7 @@ Check next steps down below.
 
 ## Run Locally
 
-All you need to do to use this project is to install it locally with the following steps. After the installation you will just need to change the .env file in client and api folders. The project is using postgres as a db but the tables will be created automatically when you signup, upload and buy a product.
+All you need to do to use this project is to install it locally with the following steps. After the installation you will just need to change the .env file in client and api folders. The project is using postgres as a db but the tables will be created automatically when you signup, upload and buy a product. If you want to use multer and create tables automatically, uncomment routes middleware.
 
 Clone the project
 
