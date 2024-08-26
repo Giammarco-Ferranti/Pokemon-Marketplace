@@ -33,11 +33,7 @@ The project has the following features:
 - Get the most selling users
 - Get the most expensive products
 
-## Link
 
-https://pokemon-marketplace-ami6.vercel.app/
-
-Check next steps down below.
 
 ## Run Locally
 
